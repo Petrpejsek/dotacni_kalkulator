@@ -527,8 +527,11 @@ function redirectToResults() {
     // Shromáždíme data z formuláře
     const formData = collectFormData();
     
+    // Získáme základní URL serveru nebo použijeme relativní cestu
+    const apiUrl = '/api/submit-dotace';
+    
     // Odešleme data na backend API
-    fetch('http://localhost:3000/api/submit-dotace', {
+    fetch(apiUrl, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
