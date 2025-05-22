@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Bojler -->
+  <rect x="24" y="12" width="24" height="40" fill="#FFFFFF" stroke="#0066CC" stroke-width="2" rx="4"/>
+  
+  <!-- Voda v bojleru -->
+  <rect x="28" y="24" width="16" height="24" fill="#AACEFF" stroke="none"/>
+  
+  <!-- Vlnky na hladině -->
+  <path d="M28 24 C30 22 32 24 34 22 C36 20 38 22 40 22 C42 22 44 24 44 24" stroke="#0066CC" stroke-width="1"/>
+  
+  <!-- Ohřev - znázorněno červenými vlnkami -->
+  <path d="M28 36 C30 34 32 36 34 34 C36 32 38 34 40 34 C42 32 44 34 44 32" stroke="#FF6B00" stroke-width="2"/>
+  <path d="M28 40 C30 38 32 40 34 38 C36 36 38 38 40 38 C42 36 44 38 44 36" stroke="#FF6B00" stroke-width="2"/>
+  
+  <!-- Fotovoltaický panel -->
+  <rect x="8" y="8" width="12" height="16" fill="#2D3E50" stroke="#1A2530" stroke-width="1"/>
+  
+  <!-- Slunce -->
+  <circle cx="14" cy="4" r="3" fill="#FFCC00" stroke="#FF6B00" stroke-width="1"/>
+  <line x1="14" y1="0" x2="14" y2="1" stroke="#FFCC00" stroke-width="1"/>
+  <line x1="14" y1="7" x2="14" y2="8" stroke="#FFCC00" stroke-width="1"/>
+  <line x1="10" y1="4" x2="11" y2="4" stroke="#FFCC00" stroke-width="1"/>
+  <line x1="17" y1="4" x2="18" y2="4" stroke="#FFCC00" stroke-width="1"/>
+  
+  <!-- Propojení - elektrické vedení -->
+  <path d="M20 16 C32 16 32 20 36 20" stroke="#0066CC" stroke-width="2" fill="none"/>
+  
+  <!-- Elektrická energie - blesk -->
+  <polygon points="52,20 48,26 52,26 48,32" stroke="#FF6B00" stroke-width="2" fill="none"/>
+  
+  <!-- Vodovodní kohoutek -->
+  <path d="M36 52 C36 56 40 56 40 52 L40 48" stroke="#0066CC" stroke-width="2" fill="none"/>
+  <circle cx="40" cy="46" r="2" fill="#0066CC"/>
+  
+  <!-- Kapky vody -->
+  <path d="M40 58 L40 60" stroke="#AACEFF" stroke-width="2" stroke-linecap="round"/>
+  <path d="M36 56 L36 58" stroke="#AACEFF" stroke-width="2" stroke-linecap="round"/>
+  <path d="M44 56 L44 58" stroke="#AACEFF" stroke-width="2" stroke-linecap="round"/>
+</svg> 

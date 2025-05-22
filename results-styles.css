@@ -1,0 +1,968 @@
+/* Styly pro stránku s výsledky */
+
+/* Kontejner pro výsledky */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    padding: 0 1rem;
+    margin: 0 auto;
+}
+
+.results-container {
+    max-width: 1200px;
+    margin: 0 auto 2rem;
+    padding: 1rem;
+}
+
+/* Úprava pro progress bar - textový krok */
+.steps .step:last-child {
+    width: auto;
+    min-width: 90px;
+    padding: 0 5px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-orange);
+    font-weight: 600;
+}
+
+/* Full width kontejner pro karty s doporučeními */
+.full-width-dotace {
+    width: 100%;
+    max-width: 100%;
+    padding: 2rem 0;
+    margin: 0 0 2rem 0;
+    background-color: #f9f9f9;
+    border-top: 1px solid #e5e5e5;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.full-width-dotace .section-title {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 2rem;
+    font-size: 2.2rem;
+    text-align: center;
+    color: #2196f3;
+    margin-bottom: 2rem;
+}
+
+.full-width-dotace .dotace-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2.5rem;
+}
+
+/* Rozšířené zobrazení pro doporučené karty */
+.dotace-grid-fullwidth {
+    width: 100%;
+    max-width: 1200px;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+}
+
+@media (min-width: 1200px) {
+    .dotace-grid-fullwidth {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+}
+
+/* Fotovoltaika - speciální rozšířená karta */
+.fotovoltaika-fullwidth {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    padding: 0;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    border: 1px solid #f0f0f0;
+    margin-bottom: 2.5rem;
+    overflow: hidden;
+}
+
+.fotovoltaika-fullwidth:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.fotovoltaika-image {
+    background: linear-gradient(135deg, #1565c0, #0d47a1);
+    color: white;
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+.fotovoltaika-image::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M50,25 L25,60 L75,60 Z" fill="rgba(255,255,255,0.1)"/></svg>');
+    background-size: 80px 80px;
+    opacity: 0.2;
+}
+
+.fotovoltaika-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.fotovoltaika-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin: 0 0 1rem 0;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.fotovoltaika-amount {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 1rem 0;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.fotovoltaika-program {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+}
+
+.fotovoltaika-program img {
+    height: 40px;
+    margin-right: 0.8rem;
+}
+
+.fotovoltaika-content {
+    padding: 2.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.fotovoltaika-description {
+    grid-column: 1 / -1;
+}
+
+.fotovoltaika-description p {
+    font-size: 1.1rem;
+    color: #555;
+    line-height: 1.6;
+    margin-top: 0;
+}
+
+.fotovoltaika-conditions, 
+.fotovoltaika-benefits {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.fotovoltaika-conditions h4, 
+.fotovoltaika-benefits h4 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2196f3;
+    margin: 0 0 1rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid rgba(33, 150, 243, 0.2);
+}
+
+.fotovoltaika-conditions ul {
+    padding-left: 1.4rem;
+    margin: 0;
+}
+
+.fotovoltaika-conditions li {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #444;
+    margin-bottom: 0.7rem;
+    position: relative;
+}
+
+.fotovoltaika-tag-wrap {
+    grid-column: 1 / -1;
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+}
+
+.fotovoltaika-tag {
+    background: linear-gradient(135deg, #ffb74d, #ff9800);
+    color: white;
+    font-size: 1rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 50px;
+    display: inline-flex;
+    align-items: center;
+    font-weight: 500;
+    line-height: 1.3;
+    box-shadow: 0 2px 4px rgba(255, 152, 0, 0.2);
+}
+
+.fotovoltaika-zalohova {
+    grid-column: 1 / -1;
+    margin-top: 1rem;
+}
+
+.fotovoltaika-save {
+    display: flex;
+    justify-content: space-between;
+    background-color: #e8f5e9;
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin-top: 1rem;
+    border-left: 4px solid #2e7d32;
+}
+
+.fotovoltaika-save-text {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2e7d32;
+}
+
+.fotovoltaika-save-amount {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #2e7d32;
+}
+
+/* Úvodní panel */
+.intro-panel {
+    background-color: rgba(75, 174, 79, 0.1);
+    border-left: 5px solid var(--primary-blue);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.intro-content {
+    flex: 1;
+}
+
+.intro-panel h2 {
+    color: #2e7d32;
+    font-size: 1.8rem;
+    margin: 0 0 0.5rem 0;
+    line-height: 1.3;
+    display: flex;
+    align-items: center;
+}
+
+.intro-subtext {
+    color: #555;
+    font-size: 1.1rem;
+    margin: 0.5rem 0 0 0;
+    line-height: 1.4;
+}
+
+/* Přehledový panel s grafy */
+.dashboard-panel {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stats-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    flex: 1;
+    min-width: 200px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary-blue);
+    margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 2;
+}
+
+.stat-label {
+    font-size: 0.95rem;
+    color: #555;
+    position: relative;
+    z-index: 2;
+}
+
+.stat-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 6px;
+    width: var(--percent);
+    background-color: rgba(33, 150, 243, 0.3);
+    z-index: 1;
+}
+
+/* Nadpis sekce */
+.section-title {
+    color: var(--primary-blue);
+    font-size: 1.8rem;
+    margin: 2rem 0 1.5rem;
+    text-align: center;
+}
+
+/* Grid pro karty dotací */
+.dotace-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+/* Karta dotace */
+.dotace-card {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    padding: 2.2rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border: 1px solid #f0f0f0;
+}
+
+.dotace-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Ribbon pro doporučení */
+.card-ribbon {
+    position: absolute;
+    top: 15px;
+    right: -8px;
+    background-color: var(--primary-orange);
+    color: white;
+    padding: 0.4rem 1.2rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 0 4px 4px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.card-ribbon:before {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: -8px;
+    border-style: solid;
+    border-width: 0 8px 8px 0;
+    border-color: transparent #d15700 transparent transparent;
+}
+
+/* Hlavička karty s dotací */
+.dotace-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.2rem;
+}
+
+.dotace-icon {
+    font-size: 2.2rem;
+    margin-right: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dotace-card h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--primary-blue);
+}
+
+/* Částka dotace */
+.dotace-amount {
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: var(--primary-orange);
+    margin-bottom: 0.8rem;
+}
+
+/* Program dotace */
+.dotace-program {
+    font-size: 1.05rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+}
+
+.program-label {
+    font-weight: 600;
+    color: #555;
+    margin-right: 0.5rem;
+}
+
+.program-value {
+    color: #666;
+}
+
+/* Podmínky dotace */
+.dotace-conditions {
+    margin-bottom: 1.5rem;
+}
+
+.dotace-conditions h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 1rem 0;
+}
+
+.dotace-conditions ul {
+    padding-left: 1.4rem;
+    margin: 0;
+}
+
+.dotace-conditions li {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #444;
+    margin-bottom: 0.7rem;
+    position: relative;
+}
+
+/* Přínosy opatření */
+.dotace-benefits {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.dotace-benefits h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 1rem 0;
+}
+
+.benefits-list {
+    list-style-type: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.benefits-list li {
+    display: flex;
+    align-items: flex-start;
+    font-size: 1rem;
+    color: #444;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+}
+
+.benefit-icon {
+    margin-right: 0.8rem;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+}
+
+.benefits-list li strong {
+    color: #2e7d32;
+    margin-right: 0.3rem;
+}
+
+/* Tagy pro bonusy */
+.dotace-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
+}
+
+.dotace-tag {
+    background-color: #e3f2fd;
+    color: #1565c0;
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    display: inline-flex;
+    align-items: center;
+    font-weight: 500;
+    line-height: 1.3;
+}
+
+/* Záloha badge */
+.dotace-zalohova {
+    margin-top: auto;
+}
+
+.zalohova-badge {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    font-size: 1rem;
+    padding: 0.8rem 1rem;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    font-weight: 500;
+    width: 100%;
+}
+
+/* Souhrnný panel */
+.summary-panel {
+    background-color: #f5f9ff;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border: 1px solid #e5eeff;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+.summary-content {
+    flex: 1;
+    min-width: 300px;
+}
+
+.summary-panel h2 {
+    font-size: 1.8rem;
+    color: var(--primary-blue);
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+.summary-info {
+    padding: 0.5rem;
+}
+
+.summary-item {
+    display: flex;
+    align-items: center;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #2e7d32;
+    margin-bottom: 1.2rem;
+}
+
+.summary-icon {
+    font-size: 1.3rem;
+    margin-right: 0.5rem;
+}
+
+.summary-heading {
+    font-weight: 600;
+    color: #333;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Timeline */
+.summary-timeline {
+    flex: 1;
+    min-width: 300px;
+}
+
+.summary-timeline h3 {
+    color: var(--primary-blue);
+    font-size: 1.2rem;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+}
+
+.timeline {
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+.timeline:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: #e0e0e0;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.timeline-dot {
+    position: absolute;
+    left: -1.5rem;
+    top: 0.3rem;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: var(--primary-blue);
+    border: 3px solid white;
+    box-shadow: 0 0 0 2px var(--primary-blue);
+}
+
+.timeline-content h4 {
+    margin: 0 0 0.3rem 0;
+    font-size: 1rem;
+    color: #333;
+}
+
+.timeline-content p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* Seznam bonusů */
+.bonus-list {
+    list-style-type: none;
+    padding-left: 0.5rem;
+}
+
+.bonus-list li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.7rem;
+    font-size: 1.05rem;
+    color: #444;
+    line-height: 1.4;
+}
+
+.bonus-icon {
+    color: #2e7d32;
+    font-size: 1.3rem;
+    margin-right: 0.6rem;
+    flex-shrink: 0;
+}
+
+/* Panel pro zpřesnění výpočtu */
+.refinement-panel {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.refinement-panel h3 {
+    color: var(--primary-blue);
+    font-size: 1.3rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+.refinement-panel p {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 1.5rem;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-size: 0.9rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.form-group input {
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+.refinement-submit {
+    background-color: var(--primary-blue);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.refinement-submit:hover {
+    background-color: #1565c0;
+}
+
+/* Panel s doporučením experta */
+.expert-panel {
+    background-color: #f5f9ff;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+}
+
+.expert-avatar img {
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    width: 80px;
+    height: 80px;
+}
+
+.expert-content {
+    flex: 1;
+}
+
+.expert-content h3 {
+    color: var(--primary-blue);
+    font-size: 1.2rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+.expert-content p {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+/* Styly pro tlačítko "Chci doporučit další možné dotace" */
+.more-recommendations-btn {
+    background-color: var(--primary-orange, #ff7700);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-top: 1rem;
+    display: block;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.more-recommendations-btn:hover {
+    background-color: #e56b00;
+}
+
+/* Styly pro detailní informace v expertním panelu */
+.expert-detail {
+    background-color: rgba(255, 255, 255, 0.6);
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin: 1rem 0 1.5rem;
+    border: 1px solid #e0e0f5;
+}
+
+.expert-detail h4 {
+    color: #2e7d32;
+    font-size: 1.1rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+.expert-detail ol {
+    margin: 0;
+    padding-left: 1.5rem;
+}
+
+.expert-detail li {
+    margin-bottom: 0.8rem;
+    line-height: 1.5;
+    color: #444;
+}
+
+.expert-detail strong {
+    color: #1565c0;
+}
+
+.expert-contact {
+    background-color: var(--primary-blue);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.expert-contact:hover {
+    background-color: #1565c0;
+}
+
+/* Navigační tlačítka */
+.navigation-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin: 2rem auto;
+    width: 100%;
+    text-align: center;
+}
+
+.back-btn, .download-btn {
+    padding: 0.8rem 1.5rem;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    text-align: center;
+    min-width: 200px;
+    display: inline-block;
+}
+
+.back-btn {
+    background-color: #2196f3;
+    color: white;
+    border: none;
+}
+
+.back-btn:hover {
+    background-color: #1565c0;
+}
+
+.download-btn {
+    background-color: var(--primary-blue);
+    color: white;
+    border: none;
+}
+
+.download-btn:hover {
+    background-color: #1565c0;
+}
+
+/* Responsivní design */
+@media (max-width: 768px) {
+    .intro-panel {
+        padding: 1.2rem;
+    }
+    
+    .dotace-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats-container {
+        flex-direction: column;
+    }
+    
+    .intro-panel h2 {
+        font-size: 1.4rem;
+    }
+    
+    .summary-panel h2 {
+        font-size: 1.5rem;
+    }
+    
+    .navigation-buttons {
+        flex-direction: column;
+    }
+    
+    .back-btn, .download-btn {
+        width: 100%;
+    }
+    
+    /* Upravený progress bar pro menší obrazovky */
+    .step {
+        font-size: 0.8rem;
+    }
+    
+    .steps .step:last-child {
+        width: auto;
+        min-width: 90px;
+        padding: 0 5px;
+    }
+}
+
+@media (max-width: 480px) {
+    .intro-panel {
+        padding: 1rem;
+    }
+    
+    .intro-panel h2 {
+        font-size: 1.2rem;
+    }
+    
+    .dotace-amount {
+        font-size: 1.7rem;
+    }
+    
+    .dotace-card h3 {
+        font-size: 1.1rem;
+    }
+    
+    .summary-panel h2 {
+        font-size: 1.3rem;
+    }
+    
+    .expert-panel {
+        flex-direction: column;
+    }
+    
+    .expert-avatar {
+        margin-bottom: 1rem;
+    }
+}
+
+@media (min-width: 1600px) {
+    .dotace-grid {
+        grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+    }
+    
+    .dotace-card {
+        padding: 2rem;
+    }
+    
+    .stats-container {
+        gap: 2rem;
+    }
+} 

@@ -1,0 +1,1165 @@
+:root {
+    --primary-blue: #0066CC;
+    --primary-orange: #FF6B00;
+    --text-color: #333333;
+    --background-color: #FFFFFF;
+    --border-color: #E5E5E5;
+    --hover-color: #F5F5F5;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--background-color);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Progress bar */
+.progress-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto 2rem;
+}
+
+/* Nový moderní header s logy */
+.main-header {
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    padding: 0.8rem 0;
+    width: 100%;
+    position: relative;
+    z-index: 10;
+}
+
+.header-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.header-left {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.header-center {
+    flex: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 1rem;
+}
+
+.header-right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 1.5rem;
+}
+
+.logo-link {
+    display: block;
+    text-decoration: none;
+}
+
+.logo {
+    width: 140px;
+    height: auto;
+    transition: opacity 0.2s;
+}
+
+.logo:hover {
+    opacity: 0.9;
+}
+
+.header-logo {
+    height: 42px;
+    width: auto;
+    transition: opacity 0.2s;
+    vertical-align: middle;
+}
+
+.header-logo:hover {
+    opacity: 0.9;
+}
+
+/* Styly log ve správných poměrech */
+.nzu-logo {
+    height: 19px;
+    margin-right: 12px;
+}
+
+/* Speciální styl pro logo Oprav dům */
+.opravdum-logo {
+    height: 90px;
+}
+
+.main-title {
+    font-size: 2.2rem;
+    color: var(--primary-blue);
+    font-weight: bold;
+    margin: 0;
+    text-align: center;
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+
+    .options-grid {
+        grid-template-columns: 1fr;
+        max-width: 100%;
+        padding: 0 1rem;
+    }
+
+    .calculator-container {
+        padding: 1rem;
+        max-height: 420px;
+    }
+
+    .checkbox-options-grid {
+        grid-template-columns: 1fr;
+        max-width: 100%;
+    }
+
+    .option-btn {
+        min-height: 140px;
+    }
+
+    .header-logo {
+        height: 38px;
+    }
+    
+    .nzu-logo {
+        height: 10px;
+    }
+    
+    .opravdum-logo {
+        height: 80px;
+    }
+
+    .site-footer {
+        font-size: 13px;
+        padding: 20px 0;
+    }
+}
+
+/* Progress bar - modré kroky za uživatelem, oranžový aktuální, klikací */
+.progress-bar {
+    width: 100%;
+    height: 4px;
+    background-color: var(--border-color);
+    border-radius: 2px;
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.progress {
+    height: 100%;
+    background-color: var(--primary-orange);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
+
+.steps {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    margin-top: -12px;
+}
+
+.step {
+    width: 24px;
+    height: 24px;
+    background-color: var(--background-color);
+    border: 2px solid var(--border-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-color);
+    position: relative;
+    z-index: 1;
+    transition: all 0.2s ease;
+}
+
+.step.completed {
+    background-color: var(--primary-blue);
+    border-color: var(--primary-blue);
+    color: white;
+}
+
+.steps .step:last-child {
+    width: auto;
+    min-width: 120px;
+    height: auto;
+    padding: 5px 8px;
+    font-size: 0.85rem;
+    background-color: transparent;
+    border-radius: 12px;
+    border: none;
+    color: var(--primary-orange);
+    font-weight: 600;
+}
+
+.step.active {
+    border-color: var(--primary-orange);
+    color: var(--primary-orange);
+}
+
+/* Oranžová na hover a aktivní tlačítka */
+.option-btn.selected, .option-btn:hover {
+    border-color: var(--primary-orange);
+    background-color: rgba(255, 107, 0, 0.08);
+}
+
+.radio-option:hover, .radio-option input[type="radio"]:checked + .radio-label {
+    border-color: var(--primary-orange);
+    color: var(--primary-orange);
+}
+
+/* Navigační tlačítka přesně podle obrázku - verze 3.0 */
+.nav-buttons, .navigation-buttons {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 2.5rem !important; /* mezera mezi tlačítky */
+    margin-top: 2.5rem !important;
+    padding-top: 1.5rem !important;
+    border-top: 1px solid var(--border-color) !important;
+    width: 100% !important;
+    max-width: 600px !important;
+}
+
+.nav-btn, .back-btn, .next-btn {
+    padding: 1.1rem 3.2rem !important; /* větší tlačítko */
+    border-radius: 10px !important; /* zaoblené rohy */
+    font-weight: 700 !important; /* tučné písmo */
+    font-size: 1.25rem !important; /* větší písmo */
+    border: none !important;
+    color: #fff !important;
+    cursor: pointer !important;
+    transition: background 0.2s, box-shadow 0.2s !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+    outline: none !important;
+    text-align: center !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 1 !important;
+    height: 3.6rem !important;
+}
+
+.nav-btn.prev, .back-btn {
+    background-color: var(--primary-blue) !important;
+}
+
+.nav-btn.next, .next-btn {
+    background-color: var(--primary-orange) !important;
+}
+
+.nav-btn:active, .back-btn:active, .next-btn:active {
+    box-shadow: 0 1px 4px rgba(0,0,0,0.12) !important;
+}
+
+.nav-btn:hover, .back-btn:hover, .next-btn:hover {
+    filter: brightness(0.93) !important;
+}
+
+/* Kalkulačka container */
+.calculator-container {
+    background-color: var(--background-color);
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    min-height: 520px;
+    max-height: none !important;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.step-content {
+    display: none;
+    height: 100%;
+}
+
+.step-content.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#step4.step-content.active {
+    overflow-y: auto !important;
+    padding: 1rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    max-height: none !important;
+    height: auto !important;
+}
+
+h2 {
+    margin-bottom: 2rem;
+    color: var(--text-color);
+    text-align: center;
+}
+
+/* Options grid */
+.options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.option-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--background-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    height: 100%;
+    min-height: 170px;
+}
+
+.option-btn img {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 1rem;
+}
+
+.option-btn span {
+    font-size: 1.1rem;
+    text-align: center;
+}
+
+.option-btn:hover {
+    border-color: var(--primary-blue);
+    background-color: rgba(0, 102, 204, 0.05);
+}
+
+.option-btn.selected {
+    border-color: var(--primary-blue);
+    background-color: rgba(0, 102, 204, 0.1);
+}
+
+/* Klikatelné kroky v progress baru */
+.step.clickable {
+    cursor: pointer;
+    border-color: var(--primary-blue);
+    color: var(--primary-blue);
+    background-color: #f0f7ff;
+}
+
+.step.clickable:hover {
+    background-color: #e6f0fa;
+    border-color: var(--primary-orange);
+    color: var(--primary-orange);
+}
+
+/* Omezím výšku kontejneru s možnostmi, aby stránka nebyla scrolovací */
+.checkbox-options-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.2rem 2rem;
+    max-width: 600px;
+    margin: 0 auto 2rem auto;
+    max-height: none;
+    overflow: visible;
+    padding-right: 0;
+    align-items: center;
+}
+
+.checkbox-option {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0.5rem 0.5rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--background-color);
+    cursor: pointer;
+    font-size: 1.05rem;
+    transition: border-color 0.3s, background 0.3s;
+    min-height: 38px;
+    height: 44px;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: left;
+    position: relative;
+    white-space: pre-line !important;
+}
+
+/* Vertikální varianta checkbox gridu s většími mezerami */
+.checkbox-options-grid.vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 16px !important;
+    max-width: 500px;
+    margin: 0 auto 2rem auto;
+}
+
+.checkbox-option input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+    accent-color: var(--primary-orange);
+    margin-right: 1rem;
+}
+
+.checkbox-option input[type="checkbox"]:checked + span {
+    color: var(--primary-orange);
+    font-weight: bold;
+}
+
+/* Styly pro tooltip u checkboxů */
+.checkbox-option {
+    position: relative;
+}
+
+.tooltip-icon-checkbox {
+    display: inline-block;
+    margin-left: 0.5em;
+    cursor: pointer;
+    font-size: 0.8em;
+    color: #666;
+}
+
+.tooltip-text-checkbox {
+    visibility: hidden;
+    opacity: 0;
+    width: 200px;
+    background-color: var(--primary-color, #007bff);
+    color: white;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -100px;
+    transition: opacity 0.3s;
+    margin-bottom: 5px;
+}
+
+.tooltip-text-checkbox::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: var(--primary-color, #007bff) transparent transparent transparent;
+}
+
+.checkbox-option:hover .tooltip-text-checkbox {
+    visibility: visible;
+    opacity: 1;
+}
+
+@media (max-width: 900px) {
+    .checkbox-columns {
+        flex-direction: column;
+        gap: 0.8rem;
+        max-width: 100%;
+    }
+    .checkbox-option {
+        font-size: 1rem;
+        min-height: 36px;
+        height: 40px;
+    }
+}
+
+.vertical-options-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    max-width: 400px;
+    margin: 0 auto 2rem auto;
+}
+
+.vertical-options-grid .option-btn {
+    width: 100%;
+    justify-content: flex-start;
+    font-size: 1.1rem;
+    padding: 0.8rem 1.2rem;
+    min-height: auto;
+    height: auto;
+}
+
+.checkbox-columns {
+    display: flex;
+    flex-direction: row;
+    gap: 1.2rem;
+    max-width: 700px;
+    margin: 0 auto 2rem auto;
+    justify-content: center;
+}
+
+.checkbox-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    flex: 1 1 0;
+}
+
+.checkbox-option span {
+    flex: 1;
+    text-align: left;
+}
+
+.checkbox-option input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--primary-orange);
+    margin-right: 0.7rem;
+}
+
+.checkbox-option input[type="checkbox"]:checked + span {
+    color: var(--primary-orange);
+    font-weight: bold;
+}
+
+.checkbox-option:hover {
+    border-color: var(--primary-blue);
+    background: #f0f7ff;
+}
+
+@media (max-width: 900px) {
+    .checkbox-columns {
+        flex-direction: column;
+        gap: 0.8rem;
+        max-width: 100%;
+    }
+    .checkbox-option {
+        font-size: 1rem;
+        min-height: 36px;
+        height: 40px;
+    }
+}
+
+.dynamic-question {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    align-items: flex-start !important;
+    text-align: left !important;
+    max-width: 500px !important;
+    margin: 0 auto !important;
+}
+
+.dynamic-question-row {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 400px;
+    align-items: flex-start !important;
+    margin: 0 auto !important;
+    gap: 15px !important;
+}
+
+.dynamic-label {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--text-color);
+    margin-bottom: 1rem;
+    text-align: left !important;
+    width: 100% !important;
+    white-space: pre-line !important;
+}
+
+.dynamic-input {
+    width: 100%;
+    max-width: 400px;
+    font-size: 1rem;
+    padding: 0.8rem 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background: #fafbfc;
+    margin: 0 auto;
+    transition: border-color 0.2s ease;
+    text-align: center !important;
+}
+
+.dynamic-input:focus {
+    border-color: var(--primary-orange);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(255, 107, 0, 0.1) !important;
+}
+
+.dynamic-optional {
+    font-size: 0.9rem;
+    color: #666;
+    margin-top: 0.3rem;
+    text-align: center;
+}
+
+/* Jednotný styl pro checkboxy a radio buttony */
+input[type="checkbox"],
+input[type="radio"] {
+    width: 20px !important;
+    height: 20px !important;
+    margin-right: 10px !important;
+    accent-color: var(--primary-orange) !important;
+    cursor: pointer !important;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border: 2px solid #ccc;
+    position: relative;
+    outline: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+input[type="checkbox"] {
+    border-radius: 4px;
+}
+
+input[type="radio"] {
+    border-radius: 50%;
+}
+
+input[type="checkbox"]:checked,
+input[type="radio"]:checked {
+    border-color: var(--primary-orange);
+    background-color: var(--primary-orange);
+}
+
+input[type="checkbox"]:checked::after,
+input[type="radio"]:checked::after {
+    content: '';
+    position: absolute;
+    display: block;
+}
+
+input[type="checkbox"]:checked::after {
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg) translate(-1px, -1px);
+}
+
+input[type="radio"]:checked::after {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: white;
+}
+
+/* Styly pro text u checkboxů a radio buttonů */
+.dynamic-radio, 
+.dynamic-checkbox {
+    display: flex;
+    align-items: center;
+    margin: 0.5rem 0 !important;
+    font-size: 1.05rem;
+    cursor: pointer;
+    text-align: left !important;
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 400px;
+    justify-content: flex-start !important;
+}
+
+/* Zvýraznění textu u zaškrtnuté položky */
+input[type="radio"]:checked + span,
+input[type="checkbox"]:checked + span {
+    color: var(--primary-orange) !important;
+    font-weight: 600 !important;
+}
+
+/* Skrytí šipek u input[type=number] */
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+.centered-step-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 400px;
+    gap: 1.2rem;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+    max-width: 420px;
+    margin: 0 auto;
+    padding: 1.3rem 1.2rem 1.2rem 1.2rem;
+}
+
+#dynamic-questions {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    gap: 2rem;
+    align-items: center !important;
+    overflow-y: visible !important;
+    height: auto !important;
+    padding-bottom: 2rem !important;
+}
+
+#lokalita-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 340px;
+    margin: 0 auto 0.7rem auto;
+    gap: 0.7rem;
+}
+.form-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 0.2rem;
+}
+.dynamic-label {
+    font-size: 1.13rem;
+    font-weight: 500;
+    margin-bottom: 0.18rem;
+    color: var(--text-color);
+    display: block;
+    text-align: left;
+    width: 100%;
+    box-sizing: border-box;
+    padding-left: 0.9rem;
+}
+.dynamic-input {
+    width: 100%;
+    max-width: 340px;
+    min-width: 0;
+    font-size: 1.08rem;
+    padding: 0.6rem 0.9rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 0.05rem;
+    box-sizing: border-box;
+    background: #fafbfc;
+    align-self: stretch;
+}
+
+.centered-step-content h2 {
+    font-size: 1.35rem;
+    font-weight: 600;
+    margin-bottom: 0.7rem;
+    text-align: center;
+    line-height: 1.18;
+    letter-spacing: 0.01em;
+    word-break: break-word;
+    white-space: normal;
+}
+
+@media (max-width: 600px) {
+    .centered-step-content {
+        max-width: 98vw;
+        padding: 0.7rem 0.2rem 0.7rem 0.2rem;
+    }
+    #lokalita-form, .dynamic-input {
+        max-width: 100%;
+    }
+    .centered-step-content h2 {
+        font-size: 1.3rem;
+    }
+}
+
+.form-row.souhlas-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    margin-left: 1em;
+}
+
+.checkbox-option.souhlas-row {
+    display: flex;
+    align-items: center;
+    gap: 0.7em;
+    font-size: 0.92em;
+    color: #666;
+    margin-top: 0.2em;
+    font-weight: 400;
+    background: none;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    width: auto;
+    margin-left: 0;
+}
+
+.checkbox-option.souhlas-row input[type="checkbox"] {
+    margin-right: 0;
+    margin-top: 0;
+    accent-color: var(--primary-blue);
+    flex-shrink: 0;
+}
+
+/* Oprava duplicity */
+.checkbox-option.souhlas-row input[type="checkbox"]:checked + .souhlas-text {
+    font-weight: 400 !important;
+}
+
+.souhlas-text {
+    font-size: 0.92em;
+    color: #666;
+    line-height: 1.4;
+    font-weight: 400 !important;
+    display: inline-block;
+    padding-top: 2px;
+}
+
+.souhlas-text a {
+    color: #0066CC;
+    text-decoration: none;
+    border-bottom: 1px dotted #0066CC;
+    transition: border-bottom 0.2s, color 0.2s;
+}
+
+.souhlas-text a:hover {
+    color: #FF6B00;
+    border-color: var(--primary-orange);
+    text-decoration: underline;
+}
+
+.jiny-row-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.7rem;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#jiny-extra-field {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    flex-grow: 1;
+}
+
+#jiny-extra-field .dynamic-label {
+    display: none;
+}
+
+#jiny-extra-field input[type="text"] {
+    min-width: 180px;
+    max-width: 220px;
+    font-size: 1em;
+    padding: 0.5em 0.8em;
+    border-radius: 8px;
+    border: 1.5px solid var(--border-color, #d0d7e2);
+    margin: 0;
+}
+
+#jiny-extra-field .next-btn {
+    padding: 0.5em 1.2em !important;
+    font-size: 1em !important;
+    border-radius: 8px !important;
+    background: var(--primary-orange, #FF6B00) !important;
+    color: #fff !important;
+    border: none !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: background 0.2s !important;
+    margin-left: 0.5em !important;
+    height: auto !important;
+}
+#jiny-extra-field .next-btn:disabled {
+    background: #e0e0e0;
+    color: #aaa;
+    cursor: not-allowed;
+}
+
+@media (max-width: 700px) {
+    .jiny-row-wrapper {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.3rem;
+        margin-left: 0;
+    }
+    #jiny-extra-field {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.3rem;
+    }
+    #jiny-extra-field input[type="text"] {
+        min-width: 0;
+        width: 100%;
+        max-width: 100%;
+    }
+    #jiny-extra-field .next-btn {
+        width: 100%;
+        margin-left: 0;
+    }
+    .jiny-row-wrapper .option-btn[data-value="jiny"] {
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        height: auto;
+        min-height: unset;
+    }
+}
+
+.jiny-row-wrapper .option-btn[data-value="jiny"] {
+    width: auto;
+    min-width: 250px;
+    max-width: 100%;
+    height: auto;
+    min-height: 170px;
+    padding: 1.5rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--background-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (min-width: 700px) {
+    .options-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+    .jiny-row-wrapper {
+        min-width: unset;
+        max-width: unset;
+    }
+    .jiny-row-wrapper .option-btn[data-value="jiny"] {
+        min-width: unset;
+        width: unset;
+        margin-bottom: 0;
+    }
+}
+
+/* Styly pro sjednocení výšky inputu a tlačítka v sekci Jiný */
+#jiny-extra-field input[type="text"], #jiny-extra-field .next-btn {
+    box-sizing: border-box !important;
+    height: 44px !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    vertical-align: middle !important;
+}
+
+/* Styly pro text Řízení spotřeby v Kroku 3 - zmenšení řádkování */
+.checkbox-option input[type="checkbox"][value="rizeni-spotreby"] + span {
+    line-height: 1.2; /* Menší řádkování pro lepší vzhled */
+}
+
+/* Styly pro tooltip v kroku 2 */
+.heading-with-tooltip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3em;
+    margin-bottom: 1.5em;
+    width: 100%;
+}
+
+.heading-with-tooltip h2 {
+    margin-bottom: 0;
+    text-align: center;
+    width: 100%;
+}
+
+.heading-subtitle {
+    font-size: 1em;
+    color: #666;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 0;
+    width: 100%;
+}
+
+.vertical-options-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    max-width: 400px;
+    margin: 0 auto 2rem auto;
+}
+
+/* Upravený styl pro scrollbar */
+.calculator-container::-webkit-scrollbar,
+#step4.step-content.active::-webkit-scrollbar {
+    width: 8px;
+}
+
+.calculator-container::-webkit-scrollbar-track,
+#step4.step-content.active::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.calculator-container::-webkit-scrollbar-thumb,
+#step4.step-content.active::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
+
+.calculator-container::-webkit-scrollbar-thumb:hover,
+#step4.step-content.active::-webkit-scrollbar-thumb:hover {
+    background: #aaa;
+}
+
+/* Speciální úprava pro lepší vzhled radio tlačítek */
+input[type="radio"] {
+    width: 20px !important;
+    height: 20px !important;
+    margin-right: 10px !important;
+    accent-color: var(--primary-orange) !important;
+    cursor: pointer !important;
+}
+
+/* Větší a výraznější label pro otázku */
+.dynamic-question h2,
+.dynamic-question .dynamic-label {
+    font-size: 1.2rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 1.5rem !important;
+    color: var(--primary-blue) !important;
+    white-space: pre-line !important;
+}
+
+/* Zvýraznění textu u zaškrtnuté položky */
+input[type="radio"]:checked + span {
+    color: var(--primary-orange) !important;
+    font-weight: 600 !important;
+}
+
+#jiny-nav-btns {
+    display: none !important;
+    margin-top: 1.5rem;
+    max-width: 300px;
+}
+
+#jiny-nav-btns.visible {
+    display: flex !important;
+}
+
+/* Zobrazení formulářových prvků na mobilních zařízeních */
+@media (max-width: 800px) {
+    .dynamic-question-row {
+        flex-direction: column;
+        align-items: center !important;
+        gap: 0.5rem;
+        width: 100% !important;
+    }
+    .dynamic-label {
+        max-width: 100%;
+        text-align: center !important;
+    }
+    .dynamic-input {
+        width: 100%;
+        min-width: 0;
+        margin-left: 0;
+        text-align: center !important;
+    }
+}
+
+/* Zvětšení mezery mezi radio tlačítky */
+.dynamic-question-row {
+    gap: 18px !important;
+}
+
+.dynamic-radio, 
+.dynamic-checkbox {
+    margin: 0.8rem 0 !important;
+}
+
+/* Speciální styly pro sekci Sociální situace */
+.socialni-situace .checkbox-options-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    margin-bottom: 1.8rem !important;
+}
+
+.socialni-situace .checkbox-option {
+    padding: 0.8rem 1.2rem !important;
+    height: auto !important;
+    margin-bottom: 0 !important;
+}
+
+.socialni-situace .checkbox-option span {
+    line-height: 1.2 !important;
+    padding-left: 0.8rem !important;
+}
+
+.socialni-situace .navigation-buttons {
+    margin-top: 0.5rem !important;
+    padding-top: 0.8rem !important;
+}
+
+.socialni-situace h2 {
+    margin-bottom: 0.5rem !important;
+}
+
+.socialni-situace .form-row label.dynamic-label {
+    margin-top: -0.5rem !important;
+}
+
+/* Menší písmo pro tlačítko Zobrazit výsledek */
+#step7 .next-btn {
+    font-size: 1.1rem !important;
+    padding: 1.1rem 2.5rem !important;
+    white-space: nowrap;
+}

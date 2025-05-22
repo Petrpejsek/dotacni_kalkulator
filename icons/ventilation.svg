@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Dům v řezu -->
+  <rect x="4" y="12" width="56" height="40" fill="#E1EDFF" stroke="#0066CC" stroke-width="2"/>
+  <polygon points="4,12 32,4 60,12" fill="#E1EDFF" stroke="#0066CC" stroke-width="2"/>
+  
+  <!-- Rekuperační jednotka -->
+  <rect x="24" y="20" width="16" height="24" fill="#FFFFFF" stroke="#0066CC" stroke-width="2" rx="2"/>
+  
+  <!-- Ventilátor uvnitř -->
+  <circle cx="32" cy="32" r="6" fill="#AACEFF" stroke="#0066CC" stroke-width="1"/>
+  <path d="M32 26 C36 30 36 34 32 38" stroke="#0066CC" stroke-width="1" fill="none"/>
+  <path d="M32 26 C28 30 28 34 32 38" stroke="#0066CC" stroke-width="1" fill="none"/>
+  
+  <!-- Potrubí - přívod čerstvého vzduchu -->
+  <path d="M24 24 L4 24" stroke="#0066CC" stroke-width="2" fill="none"/>
+  <polygon points="8,22 4,24 8,26" fill="#0066CC"/>
+  
+  <!-- Potrubí - odvod použitého vzduchu -->
+  <path d="M24 40 L4 40" stroke="#FF6B00" stroke-width="2" fill="none"/>
+  <polygon points="20,38 24,40 20,42" fill="#FF6B00"/>
+  
+  <!-- Potrubí - přívod ohřátého vzduchu -->
+  <path d="M40 24 L60 24" stroke="#FF6B00" stroke-width="2" fill="none"/>
+  <polygon points="56,22 60,24 56,26" fill="#FF6B00"/>
+  
+  <!-- Potrubí - odvod ochlazeného vzduchu -->
+  <path d="M40 40 L60 40" stroke="#0066CC" stroke-width="2" fill="none"/>
+  <polygon points="44,38 40,40 44,42" fill="#0066CC"/>
+  
+  <!-- Výměník tepla - znázorněno křížením -->
+  <path d="M28 28 L36 36" stroke="#FF6B00" stroke-width="2"/>
+  <path d="M36 28 L28 36" stroke="#0066CC" stroke-width="2"/>
+</svg> 

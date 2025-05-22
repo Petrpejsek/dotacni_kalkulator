@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Zeď s izolací -->
+  <rect x="8" y="8" width="48" height="48" fill="#E1EDFF" stroke="#0066CC" stroke-width="2"/>
+  
+  <!-- Cihly -->
+  <line x1="8" y1="16" x2="56" y2="16" stroke="#0066CC" stroke-width="1"/>
+  <line x1="8" y1="24" x2="56" y2="24" stroke="#0066CC" stroke-width="1"/>
+  <line x1="8" y1="32" x2="56" y2="32" stroke="#0066CC" stroke-width="1"/>
+  <line x1="8" y1="40" x2="56" y2="40" stroke="#0066CC" stroke-width="1"/>
+  <line x1="8" y1="48" x2="56" y2="48" stroke="#0066CC" stroke-width="1"/>
+  
+  <line x1="16" y1="8" x2="16" y2="56" stroke="#0066CC" stroke-width="1"/>
+  <line x1="32" y1="8" x2="32" y2="56" stroke="#0066CC" stroke-width="1"/>
+  <line x1="48" y1="8" x2="48" y2="56" stroke="#0066CC" stroke-width="1"/>
+  
+  <!-- Izolační vrstva -->
+  <rect x="4" y="8" width="4" height="48" fill="#FF6B00" stroke="#E86000" stroke-width="1"/>
+  <rect x="56" y="8" width="4" height="48" fill="#FF6B00" stroke="#E86000" stroke-width="1"/>
+  <rect x="8" y="4" width="48" height="4" fill="#FF6B00" stroke="#E86000" stroke-width="1"/>
+  <rect x="8" y="56" width="48" height="4" fill="#FF6B00" stroke="#E86000" stroke-width="1"/>
+</svg> 

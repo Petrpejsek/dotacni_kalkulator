@@ -1,0 +1,246 @@
+/* Landing Page Styles */
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, #f5f9ff 0%, #e9f2ff 100%);
+    padding: 4rem 0;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+.hero-section h1 {
+    font-size: 2.5rem;
+    color: var(--primary-blue);
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+}
+
+.hero-section p {
+    font-size: 1.2rem;
+    color: #555;
+    margin-bottom: 2rem;
+    line-height: 1.5;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.cta-button {
+    display: inline-block;
+    background-color: var(--primary-orange);
+    color: white;
+    font-size: 1.25rem;
+    font-weight: 700;
+    padding: 1.1rem 3rem;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: background-color 0.2s, transform 0.2s;
+    box-shadow: 0 4px 15px rgba(255, 107, 0, 0.3);
+    text-align: center;
+}
+
+.cta-button:hover {
+    background-color: #e86000;
+    transform: translateY(-2px);
+}
+
+.cta-button:active {
+    transform: translateY(0);
+}
+
+.cta-button.large {
+    font-size: 1.4rem;
+    padding: 1.3rem 3.5rem;
+}
+
+/* Dotace Section */
+.dotace-section {
+    padding: 4rem 0;
+    background-color: #f5f9ff;
+}
+
+.dotace-section h2 {
+    text-align: center;
+    color: var(--primary-blue);
+    font-size: 2rem;
+    margin-bottom: 3rem;
+}
+
+.dotace-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.dotace-item {
+    text-align: center;
+    padding: 2rem 1rem;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s;
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.dotace-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary-orange);
+}
+
+.dotace-icon {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 1rem;
+}
+
+.dotace-item h3 {
+    font-size: 1.1rem;
+    color: #333;
+    margin-top: 1rem;
+}
+
+/* Steps Section */
+.steps-section {
+    padding: 4rem 0;
+    background-color: #fff;
+}
+
+.steps-section h2 {
+    text-align: center;
+    color: var(--primary-blue);
+    font-size: 2rem;
+    margin-bottom: 3rem;
+}
+
+.steps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.step-item {
+    text-align: center;
+    padding: 2rem 1.5rem;
+    position: relative;
+}
+
+.step-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    background-color: var(--primary-orange);
+    color: white;
+    font-size: 1.8rem;
+    font-weight: bold;
+    border-radius: 50%;
+    margin: 0 auto 1.5rem;
+}
+
+.step-item h3 {
+    font-size: 1.3rem;
+    color: var(--primary-blue);
+    margin-bottom: 1rem;
+}
+
+.step-item p {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.5;
+}
+
+/* Calculator Section */
+.calculator-section {
+    padding: 4rem 0;
+    background-color: #f5f9ff;
+    text-align: center;
+}
+
+.calculator-section h2 {
+    color: var(--primary-blue);
+    font-size: 2rem;
+    margin-bottom: 2rem;
+}
+
+.calculator-wrapper {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Container for the content */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+/* Responsive Styles */
+@media (max-width: 1200px) {
+    .dotace-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 992px) {
+    .hero-section {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
+
+    .dotace-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .steps-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-content {
+        padding: 0 1rem;
+    }
+
+    .hero-section h1 {
+        font-size: 2rem;
+    }
+    
+    .dotace-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        padding: 0 1rem;
+    }
+
+    .steps-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .cta-button {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+@media (max-width: 576px) {
+    .dotace-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+} 

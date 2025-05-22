@@ -1,0 +1,57 @@
+/* VÝHRADNÍ STYLY PRO TLAČÍTKA - VYŠŠÍ PRIORITA NEŽ VŠECHNY OSTATNÍ STYLY */
+
+.navigation-buttons {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 2.5rem !important;
+    margin-top: 2.5rem !important;
+    padding-top: 1.5rem !important;
+    border-top: 1px solid #E5E5E5 !important;
+    width: 100% !important;
+    max-width: 600px !important;
+}
+
+button.back-btn {
+    padding: 1.1rem 3.2rem !important;
+    border-radius: 10px !important;
+    font-weight: 700 !important;
+    font-size: 1.25rem !important;
+    border: none !important;
+    color: #FFFFFF !important;
+    cursor: pointer !important;
+    transition: background 0.2s, box-shadow 0.2s !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+    outline: none !important;
+    background-color: #0066CC !important;
+}
+
+button.next-btn {
+    padding: 1.1rem 3.2rem !important;
+    border-radius: 10px !important;
+    font-weight: 700 !important;
+    font-size: 1.25rem !important;
+    border: none !important;
+    color: #FFFFFF !important;
+    cursor: pointer !important;
+    transition: background 0.2s, box-shadow 0.2s !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+    outline: none !important;
+    background-color: #FF6B00 !important;
+}
+
+button.back-btn:hover,
+button.next-btn:hover {
+    filter: brightness(0.93) !important;
+}
+
+button.back-btn:active,
+button.next-btn:active {
+    box-shadow: 0 1px 4px rgba(0,0,0,0.12) !important;
+}
+
+button.next-btn:disabled {
+    background-color: #CCCCCC !important;
+    cursor: not-allowed !important;
+    filter: none !important;
+} 

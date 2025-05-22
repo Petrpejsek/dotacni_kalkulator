@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Venkovní jednotka tepelného čerpadla -->
+  <rect x="8" y="24" width="24" height="32" fill="#AACEFF" stroke="#0066CC" stroke-width="2" rx="2"/>
+  
+  <!-- Mřížka venkovní jednotky -->
+  <line x1="12" y1="32" x2="28" y2="32" stroke="#0066CC" stroke-width="1"/>
+  <line x1="12" y1="40" x2="28" y2="40" stroke="#0066CC" stroke-width="1"/>
+  <line x1="12" y1="48" x2="28" y2="48" stroke="#0066CC" stroke-width="1"/>
+  
+  <!-- Ventilátor -->
+  <circle cx="20" cy="40" r="8" fill="#FFFFFF" stroke="#0066CC" stroke-width="1"/>
+  <path d="M20 32 C24 36 24 44 20 48" stroke="#0066CC" stroke-width="1" fill="none"/>
+  <path d="M20 32 C16 36 16 44 20 48" stroke="#0066CC" stroke-width="1" fill="none"/>
+  
+  <!-- Vnitřní jednotka -->
+  <rect x="40" y="12" width="16" height="24" fill="#FFFFFF" stroke="#0066CC" stroke-width="2" rx="2"/>
+  
+  <!-- Propojení jednotek - trubky -->
+  <path d="M32 32 C36 32 40 28 40 24" stroke="#0066CC" stroke-width="2" fill="none"/>
+  <path d="M32 40 C36 40 40 36 40 32" stroke="#0066CC" stroke-width="2" fill="none"/>
+  
+  <!-- Teplo - znázorněno vlnkami -->
+  <path d="M44 44 C46 42 48 44 50 42 C52 40 54 42 56 40" stroke="#FF6B00" stroke-width="2" fill="none"/>
+  <path d="M44 48 C46 46 48 48 50 46 C52 44 54 46 56 44" stroke="#FF6B00" stroke-width="2" fill="none"/>
+  <path d="M44 52 C46 50 48 52 50 50 C52 48 54 50 56 48" stroke="#FF6B00" stroke-width="2" fill="none"/>
+  
+  <!-- Dům -->
+  <polygon points="40,12 56,12 56,8 40,8" fill="#E1EDFF" stroke="#0066CC" stroke-width="1"/>
+  <polygon points="38,8 58,8 48,4" fill="#E1EDFF" stroke="#0066CC" stroke-width="1"/>
+</svg> 

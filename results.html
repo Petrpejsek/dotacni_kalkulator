@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Výsledky dotační kalkulačky - Enermio</title>
+    <link rel="stylesheet" href="styles.css?v=1.0.1">
+    <link rel="stylesheet" href="results-styles.css?v=1.0.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-container">
+            <div class="header-left">
+                <a href="/" class="logo-link">
+                    <img src="enermio_logo.png" alt="Logo Enermio" class="logo">
+                </a>
+            </div>
+            <div class="header-center">
+                <h1 class="main-title">Dotační kalkulačka</h1>
+            </div>
+            <div class="header-right">
+                <img src="nova_zelena_usporam.png" alt="Nová zelená úsporám" class="header-logo nzu-logo">
+                <img src="oprav_dum.png" alt="Oprav dům" class="header-logo opravdum-logo">
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Progress bar -->
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress" id="progress" style="width: 100%"></div>
+            </div>
+            <div class="steps">
+                <div class="step completed">1</div>
+                <div class="step completed">2</div>
+                <div class="step completed">3</div>
+                <div class="step completed">4</div>
+                <div class="step completed">5</div>
+                <div class="step completed">6</div>
+                <div class="step completed">7</div>
+                <div class="step completed active">Vyhodnocení</div>
+            </div>
+        </div>
+
+        <!-- Výsledky kalkulačky -->
+        <div class="results-container">
+            <!-- Úvodní zpráva -->
+            <div class="intro-panel">
+                <div class="intro-content">
+                    <h2>✅ Pro váš rodinný dům postavený v roce 1975 v Brně máte nárok na dotace až 385 000 Kč</h2>
+                    <p class="intro-subtext">Níže naleznete doporučená opatření, která jsou pro vaši nemovitost nejvýhodnější. Kontaktujte nás pro bezplatnou konzultaci a zajištění celého dotačního procesu.</p>
+                </div>
+            </div>
+
+            <!-- Přehledový panel s grafy -->
+            <div class="dashboard-panel">
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <div class="stat-value">385 000 Kč</div>
+                        <div class="stat-label">Celková výše dotace</div>
+                        <div class="stat-progress" style="--percent: 100%"></div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">2 měsíce</div>
+                        <div class="stat-label">Průměrná doba schválení</div>
+                        <div class="stat-progress" style="--percent: 70%"></div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">6 let</div>
+                        <div class="stat-label">Návratnost investice</div>
+                        <div class="stat-progress" style="--percent: 85%"></div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">45%</div>
+                        <div class="stat-label">Úspora energií</div>
+                        <div class="stat-progress" style="--percent: 45%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Full width container pro karty s dotacemi -->
+            <div class="full-width-dotace">
+                <h2 class="section-title">Doporučená opatření pro Váš dům</h2>
+                <div class="dotace-grid dotace-grid-fullwidth">
+                    <!-- Zateplení fasády -->
+                    <div class="dotace-card">
+                        <div class="card-ribbon">Doporučeno</div>
+                        <div class="dotace-header">
+                            <span class="dotace-icon">🧱</span>
+                            <h3>Zateplení fasády</h3>
+                        </div>
+                        <div class="dotace-amount">170 000 Kč</div>
+                        <div class="dotace-program">
+                            <span class="program-label">Program:</span>
+                            <span class="program-value">Nová zelená úsporám</span>
+                        </div>
+                        <div class="dotace-conditions">
+                            <h4>Podmínky získání dotace:</h4>
+                            <ul>
+                                <li>Minimálně 10 cm izolace</li>
+                                <li>Zateplovaná plocha 120 m²</li>
+                                <li>Nutný odborný posudek energetického specialisty</li>
+                                <li>Realizace certifikovanou firmou</li>
+                                <li>Dosažení min. 30% úspory energie oproti původnímu stavu</li>
+                            </ul>
+                        </div>
+                        <div class="dotace-benefits">
+                            <h4>Co vám to přinese:</h4>
+                            <ul class="benefits-list">
+                                <li><span class="benefit-icon">📉</span> <strong>Nižší účty za vytápění:</strong> Úspora až 30% nákladů (cca 10 000 Kč ročně)</li>
+                                <li><span class="benefit-icon">🌡️</span> <strong>Větší tepelný komfort:</strong> Příjemnější teplota v interiéru v létě i v zimě</li>
+                                <li><span class="benefit-icon">🏠</span> <strong>Ochrana konstrukce:</strong> Delší životnost vašeho domu a prevence tvorby plísní</li>
+                                <li><span class="benefit-icon">📊</span> <strong>Lepší energetický štítek:</strong> Zvýšení třídy energetické náročnosti budovy</li>
+                                <li><span class="benefit-icon">💵</span> <strong>Vyšší hodnota nemovitosti:</strong> Zateplený dům má vyšší tržní hodnotu na realitním trhu</li>
+                            </ul>
+                        </div>
+                        <div class="dotace-tags">
+                            <span class="dotace-tag">Kombinační bonus (až +20 000 Kč)</span>
+                            <span class="dotace-tag">Projektový bonus (+5 000 Kč)</span>
+                        </div>
+                        <div class="dotace-zalohova">
+                            <span class="zalohova-badge">✅ Možno čerpat zálohově až 60% dotace</span>
+                        </div>
+                    </div>
+
+                    <!-- Fotovoltaika -->
+                    <div class="fotovoltaika-fullwidth">
+                        <div class="fotovoltaika-image">
+                            <span class="fotovoltaika-icon">☀️</span>
+                            <h3 class="fotovoltaika-title">Fotovoltaika</h3>
+                            <div class="fotovoltaika-amount">140 000 Kč</div>
+                            <div class="fotovoltaika-program">
+                                <img src="nova_zelena_usporam.png" alt="Nová zelená úsporám">
+                                Program: Nová zelená úsporám
+                            </div>
+                        </div>
+                        
+                        <div class="fotovoltaika-content">
+                            <div class="fotovoltaika-description">
+                                <p>Fotovoltaická elektrárna je jedním z nejmodernějších a nejefektivnějších řešení pro výrobu vlastní elektřiny. Díky dotaci Nová zelená úsporám Light můžete získat až <strong>140 000 Kč</strong> na pořízení fotovoltaické elektrárny pro váš dům. Aktuálně je možné získat dotaci i na menší systémy od 2 kWp výkonu.</p>
+                                <p>Díky vlastní výrobě elektřiny snížíte své účty za energie a získáte větší energetickou nezávislost. Návratnost investice se pohybuje okolo 7-10 let, s dotací je to jen 4-6 let.</p>
+                            </div>
+                            
+                            <div class="fotovoltaika-conditions">
+                                <h4>Podmínky získání dotace:</h4>
+                                <ul>
+                                    <li>Instalace nového fotovoltaického systému propojeného s vnitřními rozvody elektřiny</li>
+                                    <li>Připojení k distribuční soustavě</li>
+                                    <li>Minimální instalovaný výkon 2 kWp</li>
+                                    <li>Systém musí být namontován na střeše nebo fasádě budovy</li>
+                                    <li>Systém musí být nový a musí odpovídat technickým normám</li>
+                                    <li>Nesmí být již podpořeno jiným dotačním programem</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="fotovoltaika-benefits">
+                                <h4>Co vám to přinese:</h4>
+                                <ul class="benefits-list">
+                                    <li><span class="benefit-icon">💰</span> <strong>Nižší účty za elektřinu:</strong> Ušetříte až 60% nákladů na elektřinu (cca 15 000 - 25 000 Kč ročně)</li>
+                                    <li><span class="benefit-icon">🔋</span> <strong>Energetická nezávislost:</strong> Vlastní výroba elektřiny sníží vaši závislost na dodavatelích</li>
+                                    <li><span class="benefit-icon">🌿</span> <strong>Ekologické řešení:</strong> Výroba čisté energie bez emisí CO₂</li>
+                                    <li><span class="benefit-icon">📈</span> <strong>Zvýšení hodnoty nemovitosti:</strong> Nemovitost se systémem FVE má vyšší tržní hodnotu</li>
+                                    <li><span class="benefit-icon">⚡</span> <strong>Možnost akumulace energie:</strong> Kombinací s bateriemi můžete využívat energii i při výpadku sítě</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="fotovoltaika-tag-wrap">
+                                <span class="fotovoltaika-tag">✅ Bonus za kombinaci s TČ (+25 000 Kč)</span>
+                                <span class="fotovoltaika-tag">✅ Environmentální bonus (až +15 000 Kč)</span>
+                                <span class="fotovoltaika-tag">✅ Dotace až 50% nákladů</span>
+                            </div>
+                            
+                            <div class="fotovoltaika-zalohova">
+                                <div class="fotovoltaika-save">
+                                    <div class="fotovoltaika-save-text">Možno čerpat zálohově až 50% dotace</div>
+                                    <div class="fotovoltaika-save-amount">Až 70 000 Kč předem</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tepelné čerpadlo -->
+                    <div class="dotace-card">
+                        <div class="dotace-header">
+                            <span class="dotace-icon">🔥</span>
+                            <h3>Tepelné čerpadlo – vzduch–voda</h3>
+                        </div>
+                        <div class="dotace-amount">125 000 Kč</div>
+                        <div class="dotace-program">
+                            <span class="program-label">Program:</span>
+                            <span class="program-value">Nová zelená úsporám</span>
+                        </div>
+                        <div class="dotace-conditions">
+                            <h4>Podmínky získání dotace:</h4>
+                            <ul>
+                                <li>Výměna starého kotle za tepelné čerpadlo</li>
+                                <li>Doložení ekologické likvidace původního zdroje</li>
+                                <li>Minimální topný faktor SCOP 4,0</li>
+                                <li>Instalace odbornou firmou s certifikací</li>
+                                <li>Doložení protokolu o uvedení do provozu</li>
+                            </ul>
+                        </div>
+                        <div class="dotace-benefits">
+                            <h4>Co vám to přinese:</h4>
+                            <ul class="benefits-list">
+                                <li><span class="benefit-icon">📉</span> <strong>Výrazné úspory:</strong> Snížení nákladů na vytápění až o 60% (15-25 tisíc Kč ročně)</li>
+                                <li><span class="benefit-icon">🌿</span> <strong>Čistší ovzduší:</strong> Výrazné snížení emisí CO₂ a škodlivin v okolí vašeho domu</li>
+                                <li><span class="benefit-icon">🔄</span> <strong>Komfort obsluhy:</strong> Plně automatický provoz bez nutnosti přikládání paliva</li>
+                                <li><span class="benefit-icon">🔌</span> <strong>Jeden zdroj pro více účelů:</strong> Vytápění, ohřev vody i chlazení v létě</li>
+                                <li><span class="benefit-icon">⏱️</span> <strong>Dlouhá životnost:</strong> Průměrná doba provozu 20 let s minimální údržbou</li>
+                                <li><span class="benefit-icon">🌡️</span> <strong>Vyšší komfort bydlení:</strong> Stabilní teplota bez výkyvů a rovnoměrné rozložení tepla</li>
+                            </ul>
+                        </div>
+                        <div class="dotace-tags">
+                            <span class="dotace-tag">Bonus za kombinaci s FVE (až +15 000 Kč)</span>
+                            <span class="dotace-tag">Kotlíková dotace (až +35 000 Kč)</span>
+                        </div>
+                        <div class="dotace-zalohova">
+                            <span class="zalohova-badge">✅ Možno čerpat zálohově až 50% dotace</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Souhrn dotací -->
+            <div class="summary-panel">
+                <div class="summary-content">
+                    <h2>Celkem můžete získat až 385 000 Kč</h2>
+                    <div class="summary-info">
+                        <p class="summary-item"><span class="summary-icon">💰</span> Máte nárok na vyplacení zálohy předem (až 60% celkové dotace)</p>
+                        <p class="summary-heading">Dostupné bonusy:</p>
+                        <ul class="bonus-list">
+                            <li><span class="bonus-icon">✅</span> Bonus za kombinaci více opatření (až +38 500 Kč)</li>
+                            <li><span class="bonus-icon">✅</span> Bonus za elektronické podání (+5 000 Kč)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="summary-timeline">
+                    <h3>Přibližný harmonogram</h3>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <h4>Podání žádosti</h4>
+                                <p>1-2 týdny</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <h4>Schválení dotace</h4>
+                                <p>4-8 týdnů</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <h4>Realizace opatření</h4>
+                                <p>2-3 měsíce</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <h4>Vyplacení dotace</h4>
+                                <p>4-6 týdnů po realizaci</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Doplňující údaje pro zpřesnění výpočtu -->
+            <div class="refinement-panel">
+                <h3>Zpřesnit výpočet dotace</h3>
+                <p>Pro přesnější kalkulaci dotace můžete doplnit další údaje o vaší nemovitosti:</p>
+                <form id="refinement-form" class="refinement-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="building-area">Užitná plocha (m²)</label>
+                            <input type="number" id="building-area" name="building-area" placeholder="např. 120">
+                        </div>
+                        <div class="form-group">
+                            <label for="electricity-consumption">Roční spotřeba elektřiny (kWh)</label>
+                            <input type="number" id="electricity-consumption" name="electricity-consumption" placeholder="např. 3500">
+                        </div>
+                        <div class="form-group">
+                            <label for="heating-consumption">Roční náklady na vytápění (Kč)</label>
+                            <input type="number" id="heating-consumption" name="heating-consumption" placeholder="např. 30000">
+                        </div>
+                        <div class="form-group">
+                            <label for="roof-area">Využitelná plocha střechy (m²)</label>
+                            <input type="number" id="roof-area" name="roof-area" placeholder="např. 50">
+                        </div>
+                    </div>
+                    <button type="submit" class="refinement-submit">Přepočítat dotaci</button>
+                </form>
+            </div>
+
+            <!-- Expertní doporučení -->
+            <div class="expert-panel">
+                <div class="expert-avatar">
+                    <img src="specialist-icon.svg" alt="Energetický specialista">
+                </div>
+                <div class="expert-content">
+                    <h3>Doporučení energetického specialisty</h3>
+                    <p>Na základě zadaných údajů doporučuji kombinaci zateplení fasády a fotovoltaické elektrárny. Tato kombinace přinese nejvyšší úspory energie i nejrychlejší návratnost investice. Díky kombinačnímu bonusu můžete získat až o 10% vyšší dotaci.</p>
+                    <p>Pro váš typ nemovitosti by bylo vhodné také zvážit zateplení střechy, které může přinést další úspory i dotace.</p>
+                    <div class="expert-detail">
+                        <h4>Jak postupovat při získání dotace:</h4>
+                        <ol>
+                            <li><strong>Podání žádosti:</strong> Pomůžeme vám připravit a podat žádost o dotaci, včetně zpracování všech potřebných příloh.</li>
+                            <li><strong>Vypracování projektové dokumentace:</strong> Naši odborníci zajistí technickou dokumentaci pro vámi zvolená opatření.</li>
+                            <li><strong>Výběr dodavatele:</strong> Pomůžeme vám vybrat certifikované dodavatele s prokazatelnými referencemi.</li>
+                            <li><strong>Realizace opatření:</strong> Koordinace a dozor při realizaci vybraných úsporných opatření.</li>
+                            <li><strong>Doložení dokončení:</strong> Kompletace všech dokumentů pro závěrečné vyhodnocení žádosti.</li>
+                            <li><strong>Výplata dotace:</strong> Zajistíme, aby vám byla dotace co nejrychleji vyplacena.</li>
+                        </ol>
+                    </div>
+                    <p>Naše služby zahrnují komplexní administraci celého dotačního procesu s garancí schválení dotace. Vyřídíme veškerou dokumentaci a vy se nemusíte o nic starat.</p>
+                    <button class="more-recommendations-btn">Chci doporučit další možné dotace</button>
+                </div>
+            </div>
+
+            <!-- Navigační tlačítka -->
+            <div class="navigation-buttons">
+                <a href="index.html" class="back-btn">Zpět na kalkulačku</a>
+            </div>
+        </div>
+    </div>
+    
+    <script src="results-script.js"></script>
+    <script src="nocache.js"></script>
+</body>
+</html> 
