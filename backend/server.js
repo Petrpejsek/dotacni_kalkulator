@@ -10,7 +10,7 @@ dotenv.config();
 // Middleware
 app.use(cors({
     origin: function (origin, callback) {
-        // Seznam povolených domén
+        // Seznam povolených domén pro lokální vývoj
         const allowedOrigins = [
             'http://localhost:8888',
             'http://localhost:8000', 
@@ -20,13 +20,12 @@ app.use(cors({
             'http://127.0.0.1:3000'
         ];
         
-        // Povolí domény Netlify a Vercel (které obsahují tyto vzory)
+        // Povolí Vercel domény pro production
         const isDevelopment = !origin || allowedOrigins.includes(origin);
-        const isNetlify = origin && origin.includes('netlify.app');
         const isVercel = origin && origin.includes('vercel.app');
         const isLocalhost = origin && (origin.includes('localhost') || origin.includes('127.0.0.1'));
         
-        if (isDevelopment || isNetlify || isVercel || isLocalhost) {
+        if (isDevelopment || isVercel || isLocalhost) {
             callback(null, true);
         } else {
             console.log('CORS blokoval origin:', origin);
