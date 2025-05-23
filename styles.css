@@ -1041,11 +1041,10 @@ input[type=number] {
 }
 
 .jiny-row-wrapper {
-    grid-column: 1 / -1;
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    width: 100%;
+    width: auto;
     box-sizing: border-box;
 }
 
@@ -1053,12 +1052,13 @@ input[type=number] {
     display: flex;
     flex-direction: column;
     gap: 0.8rem;
-    width: 100%;
+    width: 300px;
     padding: 1rem;
     background: #f8f9fa;
     border-radius: 8px;
     border: 1px solid #e0e0e0;
     box-sizing: border-box;
+    margin-top: 0.5rem;
 }
 
 #jiny-extra-field .dynamic-label {
@@ -1111,14 +1111,14 @@ input[type=number] {
 
 @media (max-width: 700px) {
     .jiny-row-wrapper {
-        width: 100%;
+        width: auto;
         display: flex;
         flex-direction: column;
         gap: 0.8rem;
     }
 
     #jiny-extra-field {
-        width: 100%;
+        width: 250px;
         padding: 0.8rem;
     }
 
@@ -1131,7 +1131,7 @@ input[type=number] {
     }
 
     .jiny-row-wrapper .option-btn[data-value="jiny"] {
-        width: 100%;
+        width: 140px;
         height: 70px;
     }
 }
@@ -1148,9 +1148,6 @@ input[type=number] {
     .options-grid {
         grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
         gap: 1rem;
-    }
-    .jiny-row-wrapper {
-        grid-column: 1 / -1;
     }
 }
 
