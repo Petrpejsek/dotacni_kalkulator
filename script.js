@@ -644,15 +644,18 @@ function collectFormData() {
     };
 }
 
-// Funkce pro zobrazení načítacího indikátoru
+// Funkce pro zobrazení načítacího indikátoru s rotujícími hláškami
 function showLoadingIndicator() {
     // Vytvoříme overlay pro načítání, pokud ještě neexistuje
     if (!document.getElementById('loading-overlay')) {
         const loadingOverlay = document.createElement('div');
         loadingOverlay.id = 'loading-overlay';
         loadingOverlay.innerHTML = `
-            <div class="loading-spinner"></div>
-            <p>Probíhá výpočet dotací...</p>
+            <div class="loading-card">
+                <div class="loading-spinner">⚙️</div>
+                <div class="loading-message" id="loading-message">🔄 Přepočítáváme vaše možnosti dotací...</div>
+                <div class="loading-subtitle">Zpracování může chvíli trvat, prosíme o strpení</div>
+            </div>
         `;
         document.body.appendChild(loadingOverlay);
         
@@ -665,31 +668,119 @@ function showLoadingIndicator() {
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background-color: rgba(0, 0, 0, 0.7);
+                background: linear-gradient(135deg, rgba(0, 102, 204, 0.1), rgba(255, 107, 0, 0.1));
+                backdrop-filter: blur(5px);
                 display: flex;
-                flex-direction: column;
                 justify-content: center;
                 align-items: center;
                 z-index: 9999;
-                color: white;
+                animation: fadeIn 0.3s ease-in;
             }
+            
+            .loading-card {
+                background: #ffffff;
+                border-radius: 16px;
+                padding: 3rem 2.5rem;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+                text-align: center;
+                max-width: 500px;
+                width: 90%;
+                margin: 2rem;
+            }
+            
             .loading-spinner {
-                border: 4px solid rgba(255, 255, 255, 0.3);
-                border-top: 4px solid var(--primary-blue);
-                border-radius: 50%;
-                width: 50px;
-                height: 50px;
-                animation: spin 1s linear infinite;
-                margin-bottom: 20px;
+                font-size: 3rem;
+                margin-bottom: 1.5rem;
+                animation: spin 2s linear infinite;
+                display: inline-block;
             }
+            
+            .loading-message {
+                font-size: 1.25rem;
+                font-weight: 600;
+                color: #2c3e50;
+                margin-bottom: 1rem;
+                min-height: 60px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                opacity: 1;
+                transition: opacity 0.5s ease-in-out;
+            }
+            
+            .loading-message.fade-out {
+                opacity: 0;
+            }
+            
+            .loading-subtitle {
+                font-size: 0.95rem;
+                color: #7f8c8d;
+                font-weight: 400;
+                line-height: 1.5;
+            }
+            
             @keyframes spin {
                 0% { transform: rotate(0deg); }
                 100% { transform: rotate(360deg); }
             }
+            
+            @keyframes fadeIn {
+                from { opacity: 0; transform: scale(0.95); }
+                to { opacity: 1; transform: scale(1); }
+            }
+            
+            @media (max-width: 600px) {
+                .loading-card {
+                    padding: 2rem 1.5rem;
+                    margin: 1rem;
+                }
+                
+                .loading-message {
+                    font-size: 1.1rem;
+                    min-height: 50px;
+                }
+                
+                .loading-spinner {
+                    font-size: 2.5rem;
+                }
+            }
         `;
         document.head.appendChild(style);
+        
+        // Spustíme rotování hlášek
+        startMessageRotation();
     } else {
         document.getElementById('loading-overlay').style.display = 'flex';
+        startMessageRotation();
+    }
+}
+
+// Funkce pro rotování hlášek
+function startMessageRotation() {
+    const messages = [
+        "🔄 Přepočítáváme vaše možnosti dotací...",
+        "📊 Vyhodnocujeme technická opatření dle zadání...",
+        "🧾 Kontrolujeme nárok na zálohové vyplacení...",
+        "💬 Vytváříme přehled vašich dostupných podpor..."
+    ];
+    
+    let currentIndex = 0;
+    const messageElement = document.getElementById('loading-message');
+    
+    if (!messageElement) return;
+    
+    // Uložíme interval ID pro možnost zastavení
+    if (!window.loadingMessageInterval) {
+        window.loadingMessageInterval = setInterval(() => {
+            // Fade out efekt
+            messageElement.classList.add('fade-out');
+            
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % messages.length;
+                messageElement.textContent = messages[currentIndex];
+                messageElement.classList.remove('fade-out');
+            }, 250);
+        }, 6000);
     }
 }
 
@@ -698,6 +789,12 @@ function hideLoadingIndicator() {
     const overlay = document.getElementById('loading-overlay');
     if (overlay) {
         overlay.style.display = 'none';
+    }
+    
+    // Zastavíme rotování hlášek
+    if (window.loadingMessageInterval) {
+        clearInterval(window.loadingMessageInterval);
+        window.loadingMessageInterval = null;
     }
 }
 

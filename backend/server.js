@@ -22,6 +22,12 @@ const ASSISTANT_ID = 'asst_TND8x7S6HXvVWTTWRhAPfp75';
 // Časový limit pro zpracování odpovědi (15 minut)
 const TIMEOUT_MS = 15 * 60 * 1000;
 
+// Funkce pro čištění citačních značek z OpenAI odpovědi
+function cleanOpenAIResponse(text) {
+  // Odstranění citačních značek ve formátu 【číslo†source】
+  return text.replace(/【\d+†[^】]*】/g, '');
+}
+
 // Funkce pro čekání na dokončení běhu asistenta
 async function waitForRunCompletion(threadId, runId) {
   const startTime = Date.now();
@@ -85,19 +91,22 @@ async function processWithAssistant(formData) {
         const latestMessage = assistantMessages[0].content[0].text.value;
         console.log("Získána odpověď od asistenta");
         
+        // Vyčištění citačních značek z odpovědi
+        const cleanedMessage = cleanOpenAIResponse(latestMessage);
+        
         // Extrakce JSON z odpovědi - opravené zpracování s podporou markdown code blocks
         let jsonContent;
         
         try {
           // Pokus o přímé parsování pro případ, že odpověď je čistý JSON
-          jsonContent = JSON.parse(latestMessage);
+          jsonContent = JSON.parse(cleanedMessage);
         } catch (e) {
           // Pokus o extrakci JSON z markdown code blocks
-          let jsonText = latestMessage;
+          let jsonText = cleanedMessage;
           
           // Odstranění markdown značek z odpovědi
           const jsonRegex = /```(?:json)?\s*([\s\S]*?)\s*```/;
-          const match = jsonRegex.exec(latestMessage);
+          const match = jsonRegex.exec(cleanedMessage);
           
           if (match && match[1]) {
             jsonText = match[1].trim();
@@ -105,12 +114,12 @@ async function processWithAssistant(formData) {
               jsonContent = JSON.parse(jsonText);
             } catch (innerError) {
               console.log("Nelze parsovat extrahovaný JSON:", jsonText);
-              console.log("Původní odpověď:", latestMessage);
+              console.log("Původní odpověď:", cleanedMessage);
               throw new Error("Nelze extrahovat platný JSON z odpovědi asistenta");
             }
           } else {
             // Pokud neexistuje žádný JSON codeblock, vyhodit chybu
-            console.log("Obsah odpovědi (bez JSON bloku):", latestMessage);
+            console.log("Obsah odpovědi (bez JSON bloku):", cleanedMessage);
             throw new Error("Odpověď asistenta neobsahuje validní JSON blok");
           }
         }
