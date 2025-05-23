@@ -539,8 +539,15 @@ function redirectToResults() {
     const formData = collectFormData();
     console.log('📝 Collected form data:', formData);
     
-    // API URL směřuje na backend server na portu 3000
-    const apiUrl = 'http://localhost:3000/api/submit-dotace';
+    // Inteligentní detekce API URL - funguje jak lokálně tak na Vercel produkci
+    let apiUrl;
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        // Lokální vývoj - backend běží na portu 3000
+        apiUrl = 'http://localhost:3000/api/submit-dotace';
+    } else {
+        // Produkční server (Vercel) - backend je na /api/ cestách
+        apiUrl = '/api/submit-dotace';
+    }
     console.log('🌐 API URL:', apiUrl);
     
     // Odešleme data na backend API

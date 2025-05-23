@@ -9,7 +9,30 @@ dotenv.config();
 
 // Middleware
 app.use(cors({
-    origin: ['http://localhost:8888', 'http://localhost:8000', 'http://127.0.0.1:8888', 'http://127.0.0.1:8000'],
+    origin: function (origin, callback) {
+        // Seznam povolených domén
+        const allowedOrigins = [
+            'http://localhost:8888',
+            'http://localhost:8000', 
+            'http://localhost:3000',
+            'http://127.0.0.1:8888',
+            'http://127.0.0.1:8000',
+            'http://127.0.0.1:3000'
+        ];
+        
+        // Povolí domény Netlify a Vercel (které obsahují tyto vzory)
+        const isDevelopment = !origin || allowedOrigins.includes(origin);
+        const isNetlify = origin && origin.includes('netlify.app');
+        const isVercel = origin && origin.includes('vercel.app');
+        const isLocalhost = origin && (origin.includes('localhost') || origin.includes('127.0.0.1'));
+        
+        if (isDevelopment || isNetlify || isVercel || isLocalhost) {
+            callback(null, true);
+        } else {
+            console.log('CORS blokoval origin:', origin);
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: false
@@ -96,42 +119,42 @@ async function processWithAssistant(formData) {
         const latestMessage = assistantMessages[0].content[0].text.value;
         console.log("Získána odpověď od asistenta");
         
-        // Vyčištění citačních značek z odpovědi
-        const cleanedMessage = cleanOpenAIResponse(latestMessage);
-        
-        // Extrakce JSON z odpovědi - opravené zpracování s podporou markdown code blocks
+        // Extrakce JSON z odpovědi - vylepšené zpracování
         let jsonContent;
         
-        try {
-          // Nejdříve zkusíme najít JSON markdown block
-          const jsonRegex = /```(?:json)?\s*([\s\S]*?)\s*```/;
-          const match = jsonRegex.exec(cleanedMessage);
+        console.log("Raw odpověď asistenta:", latestMessage);
+        
+        // Vyčištění citačních značek z odpovědi
+        const cleanedMessage = cleanOpenAIResponse(latestMessage);
+        console.log("Vyčištěná odpověď:", cleanedMessage);
+        
+        // Pokus o extrakci JSON z markdown bloku
+        const jsonBlockRegex = /```(?:json)?\s*([\s\S]*?)\s*```/;
+        const match = jsonBlockRegex.exec(cleanedMessage);
+        
+        if (match && match[1]) {
+          // Našli jsme JSON v markdown bloku
+          const jsonText = match[1].trim();
+          console.log("Extrahovaný JSON text:", jsonText);
           
-          if (match && match[1]) {
-            // Máme JSON v markdown bloku
-            const jsonText = match[1].trim();
-            try {
-              jsonContent = JSON.parse(jsonText);
-              console.log("Úspěšně parsován JSON z markdown bloku");
-            } catch (innerError) {
-              console.error("Chyba při parsování JSON z markdown bloku:", innerError);
-              console.log("Obsah JSON bloku:", jsonText);
-              throw new Error("Odpověď asistenta obsahuje neplatný JSON");
-            }
-          } else {
-            // Pokus o přímé parsování pro případ, že odpověď je čistý JSON
-            try {
-              jsonContent = JSON.parse(cleanedMessage);
-              console.log("Úspěšně parsován čistý JSON");
-            } catch (e) {
-              console.error("Odpověď asistenta není ve formátu JSON:", e);
-              console.log("Obsah odpovědi:", cleanedMessage);
-              throw new Error("Odpověď asistenta není ve formátu JSON");
-            }
+          try {
+            jsonContent = JSON.parse(jsonText);
+            console.log("✅ Úspěšně parsován JSON z markdown bloku");
+          } catch (parseError) {
+            console.error("❌ Chyba při parsování JSON z markdown bloku:", parseError.message);
+            console.log("Problematický JSON text:", jsonText);
+            throw new Error("Odpověď asistenta obsahuje neplatný JSON v markdown bloku");
           }
-        } catch (parseError) {
-          console.error("Chyba při zpracování odpovědi:", parseError.message);
-          throw parseError;
+        } else {
+          // Pokus o přímé parsování čistého JSON
+          try {
+            jsonContent = JSON.parse(cleanedMessage);
+            console.log("✅ Úspěšně parsován čistý JSON");
+          } catch (parseError) {
+            console.error("❌ Odpověď asistenta není platný JSON:", parseError.message);
+            console.log("Problematická odpověď:", cleanedMessage);
+            throw new Error("Odpověď asistenta není ve formátu JSON ani v markdown bloku");
+          }
         }
         
         return {

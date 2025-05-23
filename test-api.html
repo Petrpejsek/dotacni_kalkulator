@@ -36,7 +36,15 @@
             const resultDiv = document.getElementById('result');
             resultDiv.innerHTML = '⏳ Testing API...';
 
-            fetch('http://localhost:3000/api/submit-dotace', {
+            // Inteligentní detekce API URL
+            let apiUrl;
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                apiUrl = 'http://localhost:3000/api/submit-dotace';
+            } else {
+                apiUrl = '/api/submit-dotace';
+            }
+
+            fetch(apiUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
