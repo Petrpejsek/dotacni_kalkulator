@@ -78,4 +78,4 @@ Dotační kalkulátor umožňuje uživatelům zadat informace o své nemovitosti
 
 ## Autor
 
-Vytvořeno pro Enermio 
+Vytvořeno pro Enermio # Vercel deployment test - pá 23. května 2025 18:44:36 CEST
