@@ -35,12 +35,12 @@ body {
 
 /* Nový moderní header s logy */
 .main-header {
-    background-color: #fff;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    padding: 0.8rem 0;
-    width: 100%;
-    position: relative;
-    z-index: 10;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-bottom: 1px solid #e0e0e0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
 .header-container {
@@ -50,7 +50,8 @@ body {
     justify-content: space-between;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 2rem;
+    padding: 1rem 2rem;
+    min-height: 80px;
 }
 
 .header-left {
@@ -65,7 +66,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 1rem;
+    padding: 0 2rem;
 }
 
 .header-right {
@@ -73,7 +74,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 1.5rem;
+    gap: 2rem;
 }
 
 .logo-link {
@@ -82,20 +83,23 @@ body {
 }
 
 .logo {
-    width: 140px;
+    width: 120px;
     height: auto;
-    transition: opacity 0.2s;
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
 .logo:hover {
-    opacity: 0.9;
+    transform: translateY(-2px);
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
 }
 
 .header-logo {
-    height: 42px;
+    height: 50px;
     width: auto;
-    transition: opacity 0.2s;
+    transition: all 0.3s ease;
     vertical-align: middle;
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.1));
 }
 
 .header-logo:hover {
@@ -116,22 +120,24 @@ body {
 
 /* Styly log ve správných poměrech */
 .nzu-logo {
-    height: 19px;
-    margin-right: 12px;
+    height: 40px;
+    margin-right: 1rem;
 }
 
 /* Speciální styl pro logo Oprav dům */
 .opravdum-logo {
-    height: 90px;
+    height: 50px;
 }
 
 .main-title {
-    font-size: 2.2rem;
+    font-size: 2.4rem;
     color: var(--primary-blue);
-    font-weight: bold;
+    font-weight: 700;
     margin: 0;
     text-align: center;
     white-space: nowrap;
+    text-shadow: 0 2px 4px rgba(0, 102, 204, 0.1);
+    letter-spacing: -0.5px;
 }
 
 @media (max-width: 768px) {
@@ -141,42 +147,51 @@ body {
     }
 
     .main-header {
-        padding: 0.5rem 0;
+        padding: 1rem 0;
+        position: sticky;
+        top: 0;
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
     }
 
     .header-container {
         padding: 0 1rem;
         flex-direction: column;
-        gap: 0.5rem;
+        gap: 1rem;
+        min-height: auto;
     }
 
     .header-left {
         order: 1;
         justify-content: center;
         flex: none;
+        width: 100%;
     }
 
     .header-center {
         order: 2;
         flex: none;
         padding: 0;
+        width: 100%;
     }
 
     .header-right {
         order: 3;
         justify-content: center;
         flex: none;
-        gap: 1rem;
+        gap: 2rem;
+        width: 100%;
+        flex-wrap: wrap;
     }
 
     .logo {
-        width: 120px;
+        width: 100px;
     }
 
     .main-title {
-        font-size: 1.6rem;
+        font-size: 1.8rem;
         white-space: normal;
         text-align: center;
+        line-height: 1.2;
     }
 
     .options-grid {
@@ -208,23 +223,18 @@ body {
     }
 
     .header-logo {
-        max-width: 80px !important;
-        max-height: 50px !important;
-        width: auto !important;
-        height: auto !important;
-        object-fit: contain !important;
+        height: 35px;
+        margin: 0.2rem;
     }
 
     .nzu-logo {
-        max-width: 140px !important;
-        max-height: 90px !important;
-        object-fit: contain !important;
+        height: 35px;
+        margin: 0.2rem;
     }
 
     .opravdum-logo {
-        max-width: 140px !important;
-        max-height: 90px !important;
-        object-fit: contain !important;
+        height: 35px;
+        margin: 0.2rem;
     }
 
     .site-footer {
