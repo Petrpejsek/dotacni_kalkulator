@@ -182,38 +182,73 @@ body {
     .options-grid {
         grid-template-columns: 1fr;
         max-width: 100%;
-        padding: 0 1rem;
+        gap: 0.8rem;
     }
 
     .calculator-container {
-        padding: 1rem;
-        max-height: 420px;
+        padding: 1.5rem 1rem;
+        margin: 1rem 0;
     }
 
     .checkbox-options-grid {
         grid-template-columns: 1fr;
-        max-width: 100%;
+        gap: 1rem;
+        padding: 0;
     }
 
     .option-btn {
-        min-height: 140px;
+        padding: 1rem;
+        min-height: 120px;
     }
 
     .header-logo {
-        height: 32px;
+        width: 60px;
+        height: 40px;
     }
-    
+
     .nzu-logo {
-        height: 16px;
+        width: 60px;
     }
-    
+
     .opravdum-logo {
-        height: 60px;
+        width: 100px;
     }
 
     .site-footer {
-        font-size: 13px;
-        padding: 20px 0;
+        padding: 1rem;
+        font-size: 0.8rem;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    /* Mobilní styly pro navigační tlačítka */
+    .nav-buttons, .navigation-buttons {
+        flex-direction: column !important;
+        gap: 1rem !important;
+        margin-top: 1.5rem !important;
+        padding: 1rem 0 !important;
+        max-width: 100% !important;
+    }
+
+    .nav-btn, .back-btn, .next-btn {
+        width: 100% !important;
+        max-width: 280px !important;
+        padding: 1rem 2rem !important;
+        font-size: 1.1rem !important;
+        height: 3.2rem !important;
+        margin: 0 auto !important;
+        border-radius: 8px !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Speciální styl pro krok 7 */
+    #step7 .next-btn {
+        padding: 1rem 1.5rem !important;
+        font-size: 1rem !important;
+        white-space: normal !important;
+        line-height: 1.3 !important;
+        min-height: 3rem !important;
+        text-align: center !important;
     }
 }
 
@@ -345,52 +380,36 @@ body {
     color: var(--primary-orange);
 }
 
-/* Navigační tlačítka přesně podle obrázku - verze 3.0 */
-.nav-buttons, .navigation-buttons {
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    gap: 2.5rem !important; /* mezera mezi tlačítky */
-    margin-top: 2.5rem !important;
-    padding-top: 1.5rem !important;
-    border-top: 1px solid var(--border-color) !important;
-    width: 100% !important;
-    max-width: 600px !important;
-}
+/* Mobilní styly pro navigační tlačítka - opraven problém responzivity */
+@media (max-width: 768px) {
+    .nav-buttons, .navigation-buttons {
+        flex-direction: column !important;
+        gap: 1rem !important;
+        margin-top: 1.5rem !important;
+        padding: 1rem 0 !important;
+        max-width: 100% !important;
+    }
 
-.nav-btn, .back-btn, .next-btn {
-    padding: 1.1rem 3.2rem !important; /* větší tlačítko */
-    border-radius: 10px !important; /* zaoblené rohy */
-    font-weight: 700 !important; /* tučné písmo */
-    font-size: 1.25rem !important; /* větší písmo */
-    border: none !important;
-    color: #fff !important;
-    cursor: pointer !important;
-    transition: background 0.2s, box-shadow 0.2s !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
-    outline: none !important;
-    text-align: center !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    line-height: 1 !important;
-    height: 3.6rem !important;
-}
+    .nav-btn, .back-btn, .next-btn {
+        width: 100% !important;
+        max-width: 280px !important;
+        padding: 1rem 2rem !important;
+        font-size: 1.1rem !important;
+        height: 3.2rem !important;
+        margin: 0 auto !important;
+        border-radius: 8px !important;
+        box-sizing: border-box !important;
+    }
 
-.nav-btn.prev, .back-btn {
-    background-color: var(--primary-blue) !important;
-}
-
-.nav-btn.next, .next-btn {
-    background-color: var(--primary-orange) !important;
-}
-
-.nav-btn:active, .back-btn:active, .next-btn:active {
-    box-shadow: 0 1px 4px rgba(0,0,0,0.12) !important;
-}
-
-.nav-btn:hover, .back-btn:hover, .next-btn:hover {
-    filter: brightness(0.93) !important;
+    /* Speciální styl pro krok 7 */
+    #step7 .next-btn {
+        padding: 1rem 1.5rem !important;
+        font-size: 1rem !important;
+        white-space: normal !important;
+        line-height: 1.3 !important;
+        min-height: 3rem !important;
+        text-align: center !important;
+    }
 }
 
 /* Kalkulačka container */
@@ -1256,4 +1275,52 @@ input[type="radio"]:checked + span {
     font-size: 1.1rem !important;
     padding: 1.1rem 2.5rem !important;
     white-space: nowrap;
+}
+
+/* Navigační tlačítka přesně podle obrázku - verze 3.0 */
+.nav-buttons, .navigation-buttons {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 2.5rem !important; /* mezera mezi tlačítky */
+    margin-top: 2.5rem !important;
+    padding-top: 1.5rem !important;
+    border-top: 1px solid var(--border-color) !important;
+    width: 100% !important;
+    max-width: 600px !important;
+}
+
+.nav-btn, .back-btn, .next-btn {
+    padding: 1.1rem 3.2rem !important; /* větší tlačítko */
+    border-radius: 10px !important; /* zaoblené rohy */
+    font-weight: 700 !important; /* tučné písmo */
+    font-size: 1.25rem !important; /* větší písmo */
+    border: none !important;
+    color: #fff !important;
+    cursor: pointer !important;
+    transition: background 0.2s, box-shadow 0.2s !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+    outline: none !important;
+    text-align: center !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 1 !important;
+    height: 3.6rem !important;
+}
+
+.nav-btn.prev, .back-btn {
+    background-color: var(--primary-blue) !important;
+}
+
+.nav-btn.next, .next-btn {
+    background-color: var(--primary-orange) !important;
+}
+
+.nav-btn:active, .back-btn:active, .next-btn:active {
+    box-shadow: 0 1px 4px rgba(0,0,0,0.12) !important;
+}
+
+.nav-btn:hover, .back-btn:hover, .next-btn:hover {
+    filter: brightness(0.93) !important;
 }
