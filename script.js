@@ -143,7 +143,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Zobrazit pole pro jiný typ nemovitosti a navigační tlačítka
                 jinyExtraField.style.display = 'flex';
                 jinyExtraField.innerHTML = `
-                    <input type="text" id="jiny-input" class="dynamic-input" placeholder="Doplňte typ nemovitosti">
+                    <label class="dynamic-label" for="jiny-input">Doplňte typ nemovitosti:</label>
+                    <input type="text" id="jiny-input" class="dynamic-input" placeholder="Například: Garáž, Skladiště, Kancelář...">
                     <button class="next-btn" id="jiny-input-next">Pokračovat</button>
                 `;
                 
