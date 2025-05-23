@@ -102,10 +102,19 @@ document.addEventListener('DOMContentLoaded', function() {
         progressBar.style.width = `${progress}%`;
         steps.forEach((step, index) => {
             step.classList.remove('active', 'completed', 'clickable');
+            
+            // Zkontroluj, jestli je to textový krok (posledný krok s textem)
+            const isTextStep = step.classList.contains('text-step') || 
+                               (index === steps.length - 1 && isNaN(step.textContent.trim()));
+            
             if (index + 1 === currentStep) {
                 step.classList.add('active');
             } else if (index + 1 < currentStep) {
-                step.classList.add('completed', 'clickable');
+                step.classList.add('completed');
+                // Číselné kroky mohou být klikatelné, textové ne
+                if (!isTextStep) {
+                    step.classList.add('clickable');
+                }
             }
         });
     }
@@ -527,8 +536,8 @@ function redirectToResults() {
     // Shromáždíme data z formuláře
     const formData = collectFormData();
     
-    // Získáme základní URL serveru nebo použijeme relativní cestu
-    const apiUrl = '/api/submit-dotace';
+    // API URL směřuje na backend server na portu 3000
+    const apiUrl = 'http://localhost:3000/api/submit-dotace';
     
     // Odešleme data na backend API
     fetch(apiUrl, {

@@ -18,13 +18,18 @@
 .steps .step:last-child {
     width: auto;
     min-width: 90px;
-    padding: 0 5px;
+    height: 28px;
+    padding: 4px 12px;
     font-size: 0.85rem;
+    background-color: var(--primary-orange);
+    border-radius: 14px;
+    border: 2px solid var(--primary-orange);
+    color: white;
+    font-weight: 600;
+    white-space: nowrap;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--primary-orange);
-    font-weight: 600;
 }
 
 /* Full width kontejner pro karty s doporučeními */

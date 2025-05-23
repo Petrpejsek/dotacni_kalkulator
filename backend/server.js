@@ -85,7 +85,7 @@ async function processWithAssistant(formData) {
         const latestMessage = assistantMessages[0].content[0].text.value;
         console.log("Získána odpověď od asistenta");
         
-        // Extrakce JSON z odpovědi - nové zpracování s podporou markdown code blocks
+        // Extrakce JSON z odpovědi - opravené zpracování s podporou markdown code blocks
         let jsonContent;
         
         try {
@@ -93,17 +93,25 @@ async function processWithAssistant(formData) {
           jsonContent = JSON.parse(latestMessage);
         } catch (e) {
           // Pokus o extrakci JSON z markdown code blocks
-          const jsonMatch = latestMessage.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
-          if (jsonMatch && jsonMatch[1]) {
+          let jsonText = latestMessage;
+          
+          // Odstranění markdown značek z odpovědi
+          const jsonRegex = /```(?:json)?\s*([\s\S]*?)\s*```/;
+          const match = jsonRegex.exec(latestMessage);
+          
+          if (match && match[1]) {
+            jsonText = match[1].trim();
             try {
-              jsonContent = JSON.parse(jsonMatch[1]);
+              jsonContent = JSON.parse(jsonText);
             } catch (innerError) {
-              console.log("Obsah odpovědi:", latestMessage);
+              console.log("Nelze parsovat extrahovaný JSON:", jsonText);
+              console.log("Původní odpověď:", latestMessage);
               throw new Error("Nelze extrahovat platný JSON z odpovědi asistenta");
             }
           } else {
-            console.log("Obsah odpovědi:", latestMessage);
-            throw new Error("Odpověď asistenta není ve formátu JSON");
+            // Pokud neexistuje žádný JSON codeblock, vyhodit chybu
+            console.log("Obsah odpovědi (bez JSON bloku):", latestMessage);
+            throw new Error("Odpověď asistenta neobsahuje validní JSON blok");
           }
         }
         

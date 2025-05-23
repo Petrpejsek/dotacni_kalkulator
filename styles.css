@@ -187,6 +187,7 @@ body {
     justify-content: space-between;
     position: relative;
     margin-top: -12px;
+    align-items: center;
 }
 
 .step {
@@ -204,6 +205,7 @@ body {
     position: relative;
     z-index: 1;
     transition: all 0.2s ease;
+    flex-shrink: 0;
 }
 
 .step.completed {
@@ -212,22 +214,72 @@ body {
     color: white;
 }
 
-.steps .step:last-child {
-    width: auto;
-    min-width: 120px;
-    height: auto;
-    padding: 5px 8px;
-    font-size: 0.85rem;
-    background-color: transparent;
-    border-radius: 12px;
-    border: none;
-    color: var(--primary-orange);
-    font-weight: 600;
-}
-
 .step.active {
     border-color: var(--primary-orange);
     color: var(--primary-orange);
+    background-color: var(--background-color);
+}
+
+/* Textový krok na konci progress baru */
+.step.text-step {
+    width: auto;
+    min-width: 90px;
+    height: 28px;
+    padding: 4px 12px;
+    font-size: 0.85rem;
+    background-color: transparent;
+    border-radius: 14px;
+    border: 2px solid var(--primary-orange);
+    color: var(--primary-orange);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.step.text-step.completed {
+    background-color: var(--primary-orange);
+    border-color: var(--primary-orange);
+    color: white;
+}
+
+.step.text-step.active {
+    background-color: var(--primary-orange);
+    border-color: var(--primary-orange);
+    color: white;
+}
+
+/* Klikatelné kroky */
+.step.clickable {
+    cursor: pointer;
+    border-color: var(--primary-blue);
+    color: var(--primary-blue);
+    background-color: #f0f7ff;
+}
+
+.step.clickable:hover {
+    background-color: #e6f0fa;
+    border-color: var(--primary-orange);
+    color: var(--primary-orange);
+}
+
+/* Responzivní úpravy */
+@media (max-width: 768px) {
+    .progress-container {
+        max-width: 100%;
+        margin: 0 auto 1.5rem;
+    }
+    
+    .step {
+        width: 20px;
+        height: 20px;
+        font-size: 0.8rem;
+    }
+    
+    .step.text-step {
+        min-width: 80px;
+        height: 24px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+    }
 }
 
 /* Oranžová na hover a aktivní tlačítka */
@@ -375,20 +427,6 @@ h2 {
 .option-btn.selected {
     border-color: var(--primary-blue);
     background-color: rgba(0, 102, 204, 0.1);
-}
-
-/* Klikatelné kroky v progress baru */
-.step.clickable {
-    cursor: pointer;
-    border-color: var(--primary-blue);
-    color: var(--primary-blue);
-    background-color: #f0f7ff;
-}
-
-.step.clickable:hover {
-    background-color: #e6f0fa;
-    border-color: var(--primary-orange);
-    color: var(--primary-orange);
 }
 
 /* Omezím výšku kontejneru s možnostmi, aby stránka nebyla scrolovací */
