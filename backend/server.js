@@ -98,30 +98,35 @@ async function processWithAssistant(formData) {
         let jsonContent;
         
         try {
-          // Pokus o přímé parsování pro případ, že odpověď je čistý JSON
-          jsonContent = JSON.parse(cleanedMessage);
-        } catch (e) {
-          // Pokus o extrakci JSON z markdown code blocks
-          let jsonText = cleanedMessage;
-          
-          // Odstranění markdown značek z odpovědi
+          // Nejdříve zkusíme najít JSON markdown block
           const jsonRegex = /```(?:json)?\s*([\s\S]*?)\s*```/;
           const match = jsonRegex.exec(cleanedMessage);
           
           if (match && match[1]) {
-            jsonText = match[1].trim();
+            // Máme JSON v markdown bloku
+            const jsonText = match[1].trim();
             try {
               jsonContent = JSON.parse(jsonText);
+              console.log("Úspěšně parsován JSON z markdown bloku");
             } catch (innerError) {
-              console.log("Nelze parsovat extrahovaný JSON:", jsonText);
-              console.log("Původní odpověď:", cleanedMessage);
-              throw new Error("Nelze extrahovat platný JSON z odpovědi asistenta");
+              console.error("Chyba při parsování JSON z markdown bloku:", innerError);
+              console.log("Obsah JSON bloku:", jsonText);
+              throw new Error("Odpověď asistenta obsahuje neplatný JSON");
             }
           } else {
-            // Pokud neexistuje žádný JSON codeblock, vyhodit chybu
-            console.log("Obsah odpovědi (bez JSON bloku):", cleanedMessage);
-            throw new Error("Odpověď asistenta neobsahuje validní JSON blok");
+            // Pokus o přímé parsování pro případ, že odpověď je čistý JSON
+            try {
+              jsonContent = JSON.parse(cleanedMessage);
+              console.log("Úspěšně parsován čistý JSON");
+            } catch (e) {
+              console.error("Odpověď asistenta není ve formátu JSON:", e);
+              console.log("Obsah odpovědi:", cleanedMessage);
+              throw new Error("Odpověď asistenta není ve formátu JSON");
+            }
           }
+        } catch (parseError) {
+          console.error("Chyba při zpracování odpovědi:", parseError.message);
+          throw parseError;
         }
         
         return {
