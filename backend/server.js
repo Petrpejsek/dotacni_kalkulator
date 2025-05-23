@@ -50,12 +50,6 @@ const ASSISTANT_ID = 'asst_TND8x7S6HXvVWTTWRhAPfp75';
 // Časový limit pro zpracování odpovědi (15 minut)
 const TIMEOUT_MS = 15 * 60 * 1000;
 
-// Funkce pro čištění citačních značek z OpenAI odpovědi
-function cleanOpenAIResponse(text) {
-  // Odstranění citačních značek ve formátu 【číslo†source】
-  return text.replace(/【\d+†[^】]*】/g, '');
-}
-
 // Funkce pro čekání na dokončení běhu asistenta
 async function waitForRunCompletion(threadId, runId) {
   const startTime = Date.now();
@@ -110,121 +104,85 @@ async function processWithAssistant(formData) {
     // 4. Polling pro získání stavu běhu asistenta
     let runStatus = await waitForRunCompletion(thread.id, run.id);
 
-    if (runStatus.status === "completed") {
-      // 5. Získání odpovědi od asistenta
+    if (runStatus.status === 'completed') {
+      // 5. Získání zpráv z vlákna
       const messages = await openai.beta.threads.messages.list(thread.id);
-      const assistantMessages = messages.data.filter(msg => msg.role === "assistant");
+      const assistantMessage = messages.data.find(msg => msg.role === 'assistant');
       
-      if (assistantMessages.length > 0) {
-        const latestMessage = assistantMessages[0].content[0].text.value;
+      if (assistantMessage) {
+        const rawText = assistantMessage.content[0].text.value;
         console.log("Získána odpověď od asistenta");
+        console.log("RAW odpověď:", rawText);
+
+        // ULTRA ROBUSTNÍ JSON PARSING - zkusí všechny možné formáty
+        let parsedData;
         
-        // ULTRA ROBUSTNÍ JSON PARSING
-        let jsonContent;
-        
-        console.log("🔍 Raw odpověď asistenta:", latestMessage);
-        
-        // Krok 1: Vyčištění citačních značek
-        let cleanedMessage = cleanOpenAIResponse(latestMessage);
-        console.log("🧹 Po vyčištění citací:", cleanedMessage);
-        
-        // Krok 2: Odstranění všech možných prefixů a suffixů
-        cleanedMessage = cleanedMessage.trim();
-        
-        // Krok 3: Pokus o extrakci JSON z různých formátů
-        const extractionMethods = [
-          // Metoda 1: JSON v markdown bloku s "json"
-          () => {
-            const regex = /```json\s*([\s\S]*?)\s*```/i;
-            const match = regex.exec(cleanedMessage);
-            return match ? match[1].trim() : null;
-          },
+        try {
+          // Pokus 1: Přímý JSON parsing
+          parsedData = JSON.parse(rawText);
+          console.log("✅ JSON parsován přímo");
+        } catch (error) {
+          console.log("❌ Přímý JSON parsing selhal, zkouším extrakci z markdown");
           
-          // Metoda 2: JSON v markdown bloku bez "json"
-          () => {
-            const regex = /```\s*([\s\S]*?)\s*```/;
-            const match = regex.exec(cleanedMessage);
-            return match ? match[1].trim() : null;
-          },
-          
-          // Metoda 3: JSON mezi { a } (nejpornější možný JSON)
-          () => {
-            const startIndex = cleanedMessage.indexOf('{');
-            const lastIndex = cleanedMessage.lastIndexOf('}');
-            if (startIndex !== -1 && lastIndex !== -1 && lastIndex > startIndex) {
-              return cleanedMessage.substring(startIndex, lastIndex + 1);
+          // Pokus 2: Extrakce z markdown code block
+          const jsonMatch = rawText.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+          if (jsonMatch) {
+            try {
+              parsedData = JSON.parse(jsonMatch[1].trim());
+              console.log("✅ JSON extrahovány z markdown bloku");
+            } catch (markdownError) {
+              console.log("❌ JSON v markdown bloku je neplatný");
+              throw new Error(`Neplatný JSON v markdown: ${markdownError.message}`);
             }
-            return null;
-          },
-          
-          // Metoda 4: Celá zpráva jako JSON
-          () => {
-            return cleanedMessage;
-          }
-        ];
-        
-        let successful = false;
-        
-        for (let i = 0; i < extractionMethods.length; i++) {
-          try {
-            const extractedText = extractionMethods[i]();
-            if (extractedText) {
-              console.log(`🔧 Pokus ${i + 1} - extrahovaný text:`, extractedText);
-              jsonContent = JSON.parse(extractedText);
-              console.log(`✅ ÚSPĚCH! Metoda ${i + 1} úspěšně parsovala JSON`);
-              successful = true;
-              break;
+          } else {
+            // Pokus 3: Hledání JSON objektu v textu
+            const jsonStart = rawText.indexOf('{');
+            const jsonEnd = rawText.lastIndexOf('}');
+            
+            if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
+              try {
+                const jsonString = rawText.substring(jsonStart, jsonEnd + 1);
+                parsedData = JSON.parse(jsonString);
+                console.log("✅ JSON nalezen a parsován z textu");
+              } catch (extractError) {
+                throw new Error(`Nelze parsovat JSON z odpovědi. Původní text: ${rawText}`);
+              }
+            } else {
+              throw new Error(`Žádný JSON obsah nalezen v odpovědi: ${rawText}`);
             }
-          } catch (parseError) {
-            console.log(`❌ Metoda ${i + 1} selhala:`, parseError.message);
-            continue;
           }
         }
-        
-        if (!successful) {
-          console.error("🚨 VŠECHNY METODY SELHALY!");
-          console.error("Originální odpověď:", latestMessage);
-          console.error("Vyčištěná odpověď:", cleanedMessage);
-          
-          // Fallback - zkusíme vytvořit prázdný response
-          jsonContent = {
-            intro_text: "Bohužel došlo k chybě při zpracování odpovědi. Zkuste to prosím znovu.",
-            doporučene_dotace: [],
-            celková_dotace: "0 Kč",
-            další_informace: {
-              nárok_na_zálohu: false,
-              možnosti_bonusu: []
-            }
-          };
-          console.log("📋 Použit fallback response");
+
+        // Validace struktury odpovědi
+        if (!parsedData || typeof parsedData !== 'object') {
+          throw new Error('Parsovaná data nejsou validní objekt');
         }
+
+        // Validace požadovaných polí
+        const requiredFields = ['intro_text', 'doporučene_dotace', 'celková_dotace'];
+        const missingFields = requiredFields.filter(field => !parsedData[field]);
         
-        return {
-          success: true,
-          data: jsonContent
-        };
+        if (missingFields.length > 0) {
+          console.log(`⚠️ Chybí povinná pole: ${missingFields.join(', ')}`);
+          // Přidáme výchozí hodnoty pro chybějící pole
+          if (!parsedData.intro_text) parsedData.intro_text = "Výsledky dotačního kalkulátoru";
+          if (!parsedData.doporučene_dotace) parsedData.doporučene_dotace = [];
+          if (!parsedData.celková_dotace) parsedData.celková_dotace = "0 Kč";
+        }
+
+        console.log("✅ Úspěšně zpracována odpověď asistenta:", JSON.stringify(parsedData, null, 2));
+        return parsedData;
+        
       } else {
-        throw new Error("Asistent neodpověděl žádnou zprávou");
+        throw new Error('Nenalezena odpověď asistenta');
       }
     } else {
-      throw new Error(`Běh asistenta selhal se statusem: ${runStatus.status}`);
+      throw new Error(`Asistent neskončil úspěšně. Status: ${runStatus.status}`);
     }
-  } catch (error) {
-    console.error("Chyba při komunikaci s asistentem:", error);
     
-    // Fallback response pro případ úplného selhání
-    return {
-      success: true,
-      data: {
-        intro_text: "Omlouváme se, došlo k technické chybě při zpracování vašeho dotazu. Zkuste to prosím za chvíli znovu.",
-        doporučene_dotace: [],
-        celková_dotace: "0 Kč",
-        další_informace: {
-          nárok_na_zálohu: false,
-          možnosti_bonusu: ["Zkuste formulář vyplnit znovu za několik minut"]
-        }
-      }
-    };
+  } catch (error) {
+    console.error('Chyba při komunikaci s asistentem:', error);
+    throw new Error(`Chyba při komunikaci s asistentem: ${error.message}`);
   }
 }
 
@@ -278,7 +236,10 @@ app.post('/api/submit-dotace', async (req, res) => {
     // Zpracování dat pomocí OpenAI asistenta
     try {
       const assistantResponse = await processWithAssistant(formData);
-      return res.json(assistantResponse);
+      return res.json({
+        success: true,
+        data: assistantResponse
+      });
     } catch (error) {
       console.error('Chyba při zpracování asistentem:', error.message);
       return res.status(500).json({
@@ -300,11 +261,14 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Server běží' });
 });
 
-// Nastavení portu
-const PORT = process.env.PORT || 3000;
+// Pro lokální vývoj
+if (require.main === module) {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Server běží na portu ${PORT}`);
+    console.log(`OpenAI API klíč ${process.env.OPENAI_API_KEY ? 'JE' : 'NENÍ'} nastaven`);
+  });
+}
 
-// Spuštění serveru
-app.listen(PORT, () => {
-  console.log(`Server běží na portu ${PORT}`);
-  console.log(`OpenAI API klíč ${process.env.OPENAI_API_KEY ? 'JE' : 'NENÍ'} nastaven`);
-}); 
+// Export pro Vercel
+module.exports = app; 
