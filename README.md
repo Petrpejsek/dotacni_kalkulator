@@ -1,6 +1,8 @@
-# Dotační kalkulátor Enermio
+# Dotační kalkulátor
 
-Webová aplikace pro výpočet dostupných dotací na energetické úspory a renovace nemovitostí.
+Webová aplikace pro výpočet dotací na energetické úspory.
+
+**Posledná aktualizace**: 23.5.2025 16:43
 
 ## Popis projektu
 
