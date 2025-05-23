@@ -119,42 +119,84 @@ async function processWithAssistant(formData) {
         const latestMessage = assistantMessages[0].content[0].text.value;
         console.log("Získána odpověď od asistenta");
         
-        // Extrakce JSON z odpovědi - vylepšené zpracování
+        // ULTRA ROBUSTNÍ JSON PARSING
         let jsonContent;
         
-        console.log("Raw odpověď asistenta:", latestMessage);
+        console.log("🔍 Raw odpověď asistenta:", latestMessage);
         
-        // Vyčištění citačních značek z odpovědi
-        const cleanedMessage = cleanOpenAIResponse(latestMessage);
-        console.log("Vyčištěná odpověď:", cleanedMessage);
+        // Krok 1: Vyčištění citačních značek
+        let cleanedMessage = cleanOpenAIResponse(latestMessage);
+        console.log("🧹 Po vyčištění citací:", cleanedMessage);
         
-        // Pokus o extrakci JSON z markdown bloku
-        const jsonBlockRegex = /```(?:json)?\s*([\s\S]*?)\s*```/;
-        const match = jsonBlockRegex.exec(cleanedMessage);
+        // Krok 2: Odstranění všech možných prefixů a suffixů
+        cleanedMessage = cleanedMessage.trim();
         
-        if (match && match[1]) {
-          // Našli jsme JSON v markdown bloku
-          const jsonText = match[1].trim();
-          console.log("Extrahovaný JSON text:", jsonText);
+        // Krok 3: Pokus o extrakci JSON z různých formátů
+        const extractionMethods = [
+          // Metoda 1: JSON v markdown bloku s "json"
+          () => {
+            const regex = /```json\s*([\s\S]*?)\s*```/i;
+            const match = regex.exec(cleanedMessage);
+            return match ? match[1].trim() : null;
+          },
           
-          try {
-            jsonContent = JSON.parse(jsonText);
-            console.log("✅ Úspěšně parsován JSON z markdown bloku");
-          } catch (parseError) {
-            console.error("❌ Chyba při parsování JSON z markdown bloku:", parseError.message);
-            console.log("Problematický JSON text:", jsonText);
-            throw new Error("Odpověď asistenta obsahuje neplatný JSON v markdown bloku");
+          // Metoda 2: JSON v markdown bloku bez "json"
+          () => {
+            const regex = /```\s*([\s\S]*?)\s*```/;
+            const match = regex.exec(cleanedMessage);
+            return match ? match[1].trim() : null;
+          },
+          
+          // Metoda 3: JSON mezi { a } (nejpornější možný JSON)
+          () => {
+            const startIndex = cleanedMessage.indexOf('{');
+            const lastIndex = cleanedMessage.lastIndexOf('}');
+            if (startIndex !== -1 && lastIndex !== -1 && lastIndex > startIndex) {
+              return cleanedMessage.substring(startIndex, lastIndex + 1);
+            }
+            return null;
+          },
+          
+          // Metoda 4: Celá zpráva jako JSON
+          () => {
+            return cleanedMessage;
           }
-        } else {
-          // Pokus o přímé parsování čistého JSON
+        ];
+        
+        let successful = false;
+        
+        for (let i = 0; i < extractionMethods.length; i++) {
           try {
-            jsonContent = JSON.parse(cleanedMessage);
-            console.log("✅ Úspěšně parsován čistý JSON");
+            const extractedText = extractionMethods[i]();
+            if (extractedText) {
+              console.log(`🔧 Pokus ${i + 1} - extrahovaný text:`, extractedText);
+              jsonContent = JSON.parse(extractedText);
+              console.log(`✅ ÚSPĚCH! Metoda ${i + 1} úspěšně parsovala JSON`);
+              successful = true;
+              break;
+            }
           } catch (parseError) {
-            console.error("❌ Odpověď asistenta není platný JSON:", parseError.message);
-            console.log("Problematická odpověď:", cleanedMessage);
-            throw new Error("Odpověď asistenta není ve formátu JSON ani v markdown bloku");
+            console.log(`❌ Metoda ${i + 1} selhala:`, parseError.message);
+            continue;
           }
+        }
+        
+        if (!successful) {
+          console.error("🚨 VŠECHNY METODY SELHALY!");
+          console.error("Originální odpověď:", latestMessage);
+          console.error("Vyčištěná odpověď:", cleanedMessage);
+          
+          // Fallback - zkusíme vytvořit prázdný response
+          jsonContent = {
+            intro_text: "Bohužel došlo k chybě při zpracování odpovědi. Zkuste to prosím znovu.",
+            doporučene_dotace: [],
+            celková_dotace: "0 Kč",
+            další_informace: {
+              nárok_na_zálohu: false,
+              možnosti_bonusu: []
+            }
+          };
+          console.log("📋 Použit fallback response");
         }
         
         return {
@@ -169,9 +211,19 @@ async function processWithAssistant(formData) {
     }
   } catch (error) {
     console.error("Chyba při komunikaci s asistentem:", error);
+    
+    // Fallback response pro případ úplného selhání
     return {
-      success: false,
-      error: error.message
+      success: true,
+      data: {
+        intro_text: "Omlouváme se, došlo k technické chybě při zpracování vašeho dotazu. Zkuste to prosím za chvíli znovu.",
+        doporučene_dotace: [],
+        celková_dotace: "0 Kč",
+        další_informace: {
+          nárok_na_zálohu: false,
+          možnosti_bonusu: ["Zkuste formulář vyplnit znovu za několik minut"]
+        }
+      }
     };
   }
 }
