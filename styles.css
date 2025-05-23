@@ -198,7 +198,7 @@ body {
     .option-btn {
         height: auto;
         padding: 1rem;
-        min-height: 100px;
+        min-height: 120px;
         border-radius: 10px;
     }
 
@@ -468,7 +468,7 @@ h2 {
 /* Options grid */
 .options-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 1.5rem;
     margin-bottom: 3rem;
     width: 100%;
@@ -482,14 +482,14 @@ h2 {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 1.2rem;
+    padding: 1rem;
     border: 2px solid transparent;
     border-radius: 12px;
     background: linear-gradient(145deg, #ffffff, #f8f9fa);
     cursor: pointer;
     transition: all 0.3s ease;
     height: 100%;
-    min-height: 120px;
+    min-height: 140px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     position: relative;
     overflow: hidden;
@@ -1128,8 +1128,8 @@ input[type=number] {
     min-width: 0;
     max-width: 100%;
     height: auto;
-    min-height: 120px;
-    padding: 1.2rem;
+    min-height: 140px;
+    padding: 1rem;
     border: 2px solid transparent;
     border-radius: 12px;
     background: linear-gradient(145deg, #ffffff, #f8f9fa);
@@ -1147,7 +1147,7 @@ input[type=number] {
 
 @media (min-width: 700px) {
     .options-grid {
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
         gap: 1.5rem;
     }
     .jiny-row-wrapper {
