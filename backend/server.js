@@ -8,7 +8,12 @@ const app = express();
 dotenv.config();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: ['http://localhost:8888', 'http://localhost:8000', 'http://127.0.0.1:8888', 'http://127.0.0.1:8000'],
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: false
+}));
 app.use(express.json());
 
 // Inicializace OpenAI klienta

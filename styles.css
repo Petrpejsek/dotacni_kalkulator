@@ -209,13 +209,15 @@ body {
     }
 
     .nzu-logo {
-        max-width: 70px !important;
-        max-height: 45px !important;
+        max-width: 140px !important;
+        max-height: 90px !important;
+        object-fit: contain !important;
     }
 
     .opravdum-logo {
-        max-width: 70px !important;
-        max-height: 45px !important;
+        max-width: 140px !important;
+        max-height: 90px !important;
+        object-fit: contain !important;
     }
 
     .site-footer {
@@ -232,7 +234,8 @@ body {
         flex-direction: column-reverse !important;
         gap: 1rem !important;
         margin-top: 1.5rem !important;
-        padding: 1rem !important;
+        padding: 1rem 0 !important;
+        max-width: 100% !important;
     }
 
     .nav-btn, .back-btn, .next-btn {
@@ -389,7 +392,7 @@ body {
 /* Mobilní styly pro navigační tlačítka - opraven problém responzivity */
 @media (max-width: 768px) {
     .nav-buttons, .navigation-buttons {
-        flex-direction: column !important;
+        flex-direction: column-reverse !important;
         gap: 1rem !important;
         margin-top: 1.5rem !important;
         padding: 1rem 0 !important;

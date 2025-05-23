@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test</title>
+</head>
+<body>
+    <h1>Test API komunikace</h1>
+    <button onclick="testAPI()">Test Backend API</button>
+    <div id="result" style="margin-top: 20px; padding: 20px; background: #f5f5f5; border-radius: 5px;"></div>
+
+    <script>
+        function testAPI() {
+            console.log('🧪 Starting API test...');
+            
+            const testData = {
+                typ_nemovitosti: 'rodinny-dum',
+                rok_vystavby: 'after-2000',
+                opatreni: ['zatepleni-sten'],
+                detaily_opatreni: {},
+                lokalita: {
+                    adresa: 'Test adresa',
+                    mesto: 'Test město',
+                    psc: '12345'
+                },
+                doplnujici_udaje: {},
+                kontakt: {
+                    jmeno: 'Test Uživatel',
+                    email: 'test@test.cz',
+                    telefon: '123456789',
+                    souhlas: true
+                }
+            };
+
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '⏳ Testing API...';
+
+            fetch('http://localhost:3000/api/submit-dotace', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(testData)
+            })
+            .then(response => {
+                console.log('📥 Response received:', response);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('✅ Success:', data);
+                resultDiv.innerHTML = `
+                    <h3>✅ API Test Successful!</h3>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+                resultDiv.style.background = '#d4edda';
+                resultDiv.style.color = '#155724';
+            })
+            .catch(error => {
+                console.error('❌ Error:', error);
+                resultDiv.innerHTML = `
+                    <h3>❌ API Test Failed!</h3>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                `;
+                resultDiv.style.background = '#f8d7da';
+                resultDiv.style.color = '#721c24';
+            });
+        }
+    </script>
+</body>
+</html> 

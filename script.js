@@ -530,16 +530,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Funkce pro přesměrování na stránku výsledků
 function redirectToResults() {
+    console.log('🚀 Starting redirectToResults...');
+    
     // Zobrazíme načítací indikátor
     showLoadingIndicator();
     
     // Shromáždíme data z formuláře
     const formData = collectFormData();
+    console.log('📝 Collected form data:', formData);
     
     // API URL směřuje na backend server na portu 3000
     const apiUrl = 'http://localhost:3000/api/submit-dotace';
+    console.log('🌐 API URL:', apiUrl);
     
     // Odešleme data na backend API
+    console.log('📤 Sending request to backend...');
     fetch(apiUrl, {
         method: 'POST',
         headers: {
@@ -547,25 +552,52 @@ function redirectToResults() {
         },
         body: JSON.stringify(formData)
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log('📥 Received response:', response);
+        console.log('📊 Response status:', response.status);
+        console.log('📊 Response ok:', response.ok);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        return response.json();
+    })
     .then(data => {
+        console.log('✅ Response data:', data);
+        
         // Skryjeme načítací indikátor
         hideLoadingIndicator();
         
         if (data.success) {
+            console.log('🎉 Success! Storing data and redirecting...');
             // Uložíme data pro zobrazení na stránce výsledků
             localStorage.setItem('dotaceResults', JSON.stringify(data.data));
+            console.log('💾 Data stored in localStorage');
             // Přesměrujeme na stránku výsledků
             window.location.href = 'results.html';
         } else {
+            console.error('❌ Backend returned error:', data.error);
             // Zobrazíme chybovou zprávu
             alert(data.error || 'Došlo k chybě při zpracování výpočtu, zkuste to prosím znovu');
         }
     })
     .catch(error => {
-        console.error('Chyba při komunikaci s API:', error);
+        console.error('💥 Error during fetch:', error);
         hideLoadingIndicator();
-        alert('Došlo k chybě při komunikaci se serverem, zkuste to prosím znovu');
+        
+        // Poskytnutí více konkrétních informací o chybě
+        let errorMessage = 'Došlo k chybě při komunikaci se serverem.';
+        
+        if (error.message.includes('NetworkError') || error.message.includes('Failed to fetch')) {
+            errorMessage = 'Nelze se připojit k serveru. Zkontrolujte prosím připojení k internetu a zkuste to znovu.';
+        } else if (error.message.includes('timeout')) {
+            errorMessage = 'Vypršel časový limit. Server je momentálně přetížený, zkuste to prosím za chvíli.';
+        } else if (error.message.includes('HTTP error')) {
+            errorMessage = 'Server je momentálně nedostupný. Zkuste to prosím za chvíli.';
+        }
+        
+        alert(errorMessage + '\n\nPokud problém přetrvává, kontaktujte prosím podporu.');
     });
 }
 
