@@ -545,6 +545,9 @@ function redirectToResults() {
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
         // Lokální vývoj - backend běží na portu 3000
         apiUrl = 'http://localhost:3000/api/submit-dotace';
+    } else if (window.location.hostname === 'enermio.cz' || window.location.hostname === 'www.enermio.cz') {
+        // Lokální vývoj - backend běží na portu 3000
+        apiUrl = '/dotacni-kalkulator/api/submit-dotace';
     } else {
         // Production na Vercel - backend je dostupný na /api/ cestách
         apiUrl = '/api/submit-dotace';
