@@ -540,14 +540,14 @@ function redirectToResults() {
     const formData = collectFormData();
     console.log('📝 Collected form data:', formData);
     
-    // Inteligentní detekce API URL
+    // Inteligentní detekce API URL pro PHP
     let apiUrl;
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        // Lokální vývoj - backend běží na portu 3000
-        apiUrl = 'http://localhost:3000/api/submit-dotace';
+        // Lokální vývoj - PHP server
+        apiUrl = 'http://localhost/dotacni_kalkulator/index.php';
     } else {
-        // Production na Vercel - backend je dostupný na /api/ cestách
-        apiUrl = '/api/submit-dotace';
+        // Production - PHP server
+        apiUrl = '/index.php';
     }
     console.log('🌐 API URL:', apiUrl);
     

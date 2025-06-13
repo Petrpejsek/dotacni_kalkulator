@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+je web mimo stranku<!DOCTYPE html>
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
@@ -36,12 +36,12 @@
             const resultDiv = document.getElementById('result');
             resultDiv.innerHTML = '⏳ Testing API...';
 
-            // Inteligentní detekce API URL
+            // Inteligentní detekce API URL pro PHP
             let apiUrl;
             if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-                apiUrl = 'http://localhost:3000/api/submit-dotace';
+                apiUrl = 'http://localhost/dotacni_kalkulator/index.php';
             } else {
-                apiUrl = '/api/submit-dotace';
+                apiUrl = '/index.php';
             }
 
             fetch(apiUrl, {
