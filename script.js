@@ -543,8 +543,16 @@ function redirectToResults() {
     // Inteligentní detekce API URL pro PHP
     let apiUrl;
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+<<<<<<< HEAD
         // Lokální vývoj - PHP server
         apiUrl = 'http://localhost/dotacni_kalkulator/index.php';
+=======
+        // Lokální vývoj - backend běží na portu 3000
+        apiUrl = 'http://localhost:3000/api/submit-dotace';
+    } else if (window.location.hostname === 'enermio.cz' || window.location.hostname === 'www.enermio.cz') {
+        // Lokální vývoj - backend běží na portu 3000
+        apiUrl = '/dotacni-kalkulator/api/submit-dotace';
+>>>>>>> ff7cd86941fd188c9841700647c1dd7e7435c855
     } else {
         // Production - PHP server
         apiUrl = '/index.php';
