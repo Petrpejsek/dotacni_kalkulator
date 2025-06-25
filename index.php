@@ -1,4 +1,8 @@
 <?php
+// Načtení konfigurace a databázové třídy
+$config = require_once 'config.php';
+require_once 'database_handler.php';
+
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
@@ -17,9 +21,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit();
 }
 
-// Načtení OpenAI API klíče z environment nebo config
-$openai_api_key = getenv('OPENAI_API_KEY') ?: 'your-openai-api-key-here';
-$assistant_id = 'asst_TND8x7S6HXvVWTTWRhAPfp75';
+// Načtení konfigurace
+$openai_api_key = $config['openai']['api_key'];
+$assistant_id = $config['openai']['assistant_id'];
 
 // Funkce pro komunikaci s OpenAI API
 function callOpenAI($url, $data, $api_key) {
@@ -218,7 +222,8 @@ function validateFormData($data) {
         throw new Exception('Nebyla poskytnuta žádná data');
     }
     
-    $required_fields = ['typ_nemovitosti', 'opatreni'];
+    // Kontrola povinných polí
+    $required_fields = ['typ_nemovitosti', 'rok_vystavby', 'opatreni', 'lokalita', 'kontakt'];
     
     foreach ($required_fields as $field) {
         if (!isset($data[$field])) {
@@ -226,12 +231,62 @@ function validateFormData($data) {
         }
     }
     
+    // Kontrola typu nemovitosti
+    if (empty($data['typ_nemovitosti'])) {
+        throw new Exception('Musí být vybrán typ nemovitosti');
+    }
+    
+    // Kontrola roku výstavby
+    if (empty($data['rok_vystavby'])) {
+        throw new Exception('Musí být vybrán rok výstavby');
+    }
+    
+    // Kontrola opatření
     if (!is_array($data['opatreni'])) {
         throw new Exception('Pole "opatreni" musí být seznam');
     }
     
     if (count($data['opatreni']) === 0) {
         throw new Exception('Musí být vybráno alespoň jedno opatření');
+    }
+    
+    // Kontrola lokality
+    if (!is_array($data['lokalita'])) {
+        throw new Exception('Lokalita musí být objekt s adresou, městem a PSČ');
+    }
+    
+    $locality_fields = ['adresa', 'mesto', 'psc'];
+    foreach ($locality_fields as $field) {
+        if (!isset($data['lokalita'][$field]) || empty(trim($data['lokalita'][$field]))) {
+            throw new Exception("Chybí nebo je prázdné pole lokality: $field");
+        }
+    }
+    
+    // Kontrola kontaktních údajů
+    if (!is_array($data['kontakt'])) {
+        throw new Exception('Kontaktní údaje musí být objekt');
+    }
+    
+    $contact_fields = ['jmeno', 'email'];
+    foreach ($contact_fields as $field) {
+        if (!isset($data['kontakt'][$field]) || empty(trim($data['kontakt'][$field]))) {
+            throw new Exception("Chybí nebo je prázdné kontaktní pole: $field");
+        }
+    }
+    
+    // Kontrola e-mailu
+    if (!filter_var($data['kontakt']['email'], FILTER_VALIDATE_EMAIL)) {
+        throw new Exception('Neplatný formát e-mailové adresy');
+    }
+    
+    // Kontrola souhlasu
+    if (!isset($data['kontakt']['souhlas']) || $data['kontakt']['souhlas'] !== true) {
+        throw new Exception('Musí být udělen souhlas se zpracováním osobních údajů');
+    }
+    
+    // Kontrola sociální situace (volitelné, ale pokud existuje, musí být pole)
+    if (isset($data['socialni_situace']) && !is_array($data['socialni_situace'])) {
+        throw new Exception('Sociální situace musí být seznam hodnot');
     }
     
     return true;
@@ -252,15 +307,50 @@ try {
     // Validace dat
     validateFormData($form_data);
     
+    // Inicializace databáze (pokud je povolena)
+    $db = null;
+    $zadost_id = null;
+    
+    if ($config['app']['enable_database_logging']) {
+        try {
+            $db = new DotacniKalkulatorDB($config['database']);
+            
+            // Uložení formulářových dat do databáze
+            $db_result = $db->ulozitFormularData($form_data);
+            $zadost_id = $db_result['zadost_id'];
+            
+            error_log("✅ Data uložena do databáze s ID: $zadost_id, UUID: {$db_result['uuid']}");
+        } catch (Exception $e) {
+            error_log("⚠️ Chyba při ukládání do databáze: " . $e->getMessage());
+            // Pokračujeme i bez databáze
+        }
+    }
+    
     // Zpracování s asistentem
     $result = processWithAssistant($form_data, $openai_api_key, $assistant_id);
     
-    // Odeslání odpovědi
-    http_response_code(200);
-    echo json_encode([
+    // Aktualizace celkové dotace v databázi
+    if ($db && $zadost_id && isset($result['celková_dotace'])) {
+        try {
+            $db->aktualizovatCelkouDotaci($zadost_id, $result['celková_dotace']);
+            error_log("✅ Aktualizována celková dotace v databázi: {$result['celková_dotace']}");
+        } catch (Exception $e) {
+            error_log("⚠️ Chyba při aktualizaci celkové dotace: " . $e->getMessage());
+        }
+    }
+    
+    // Odeslání odpovědi s přidaným UUID pro tracking
+    $response = [
         'success' => true,
         'data' => $result
-    ]);
+    ];
+    
+    if ($db && isset($db_result['uuid'])) {
+        $response['tracking_uuid'] = $db_result['uuid'];
+    }
+    
+    http_response_code(200);
+    echo json_encode($response);
     
 } catch (Exception $e) {
     error_log('Chyba: ' . $e->getMessage());

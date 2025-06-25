@@ -657,7 +657,11 @@ function collectFormData() {
         psc: document.getElementById('psc-input') ? document.getElementById('psc-input').value : ''
     };
     
-    // Doplňující údaje o nemovitosti (krok 6) - pokud existují
+    // Sociální situace (krok 6)
+    const socialniSituace = Array.from(document.querySelectorAll('#step6 input[name="social"]:checked'))
+        .map(checkbox => checkbox.value);
+    
+    // Doplňující údaje o nemovitosti - pokud existují další pole
     const doplnujiciUdaje = {};
     if (document.getElementById('step6')) {
         const vytapenaPlocha = document.getElementById('vytapena-plocha');
@@ -682,6 +686,7 @@ function collectFormData() {
         opatreni: opatreni,
         detaily_opatreni: detailyOpatreni,
         lokalita: lokalita,
+        socialni_situace: socialniSituace,
         doplnujici_udaje: doplnujiciUdaje,
         kontakt: kontakt
     };
