@@ -193,3 +193,51 @@ Pro technickou podporu nebo dotazy kontaktujte vývojářský tým.
 ---
 *Dokumentace vytvořena: 2025-01-02*
 *Verze: 1.0.0* 
+
+## Troubleshooting
+
+### Error: Auto-save neukládá data
+- Zkontrolujte JavaScript konzoli pro chyby
+- Ověřte, že `save-step.php` vrací správné JSON odpovědi
+- Zkontrolujte databázové připojení
+
+### Error: Formulář se neobnovuje správně
+- Zkontrolujte, že UUID v URL odpovídá záznamu v databázi
+- Ověřte, že data JSON obsahuje očekávaná pole
+- Pro dynamické otázky zkontrolujte, že jsou opatření správně uložena
+
+### Error: Tlačítko "Pokračovat" zůstává neaktivní
+- Zkontrolujte validace formuláře
+- Ověřte, že dynamické otázky jsou správně vygenerovány
+- Ujistěte se, že auto-save neinterferuje s event listeners
+
+## Technické poznámky
+
+### Centralizovaná definice otázek
+Od verze 1.1 je seznam dynamických otázek definován pouze jednou v `script.js` jako globální proměnná:
+
+```javascript
+// Globální definice používaná v celé aplikaci
+window.opatreniOtazky = {
+    'zatepleni-sten': {
+        label: 'Jaká je přibližná plocha obvodových stěn?\n(v m²)',
+        type: 'number',
+        min: 1,
+        placeholder: 'Např. 120',
+    },
+    // ... další otázky
+};
+```
+
+**Výhody:**
+- Eliminuje duplicitní kód
+- Snadnější údržba - změna otázky stačí provést na jednom místě
+- Konzistentnost mezi hlavním formulářem a auto-save systémem
+- Lepší performance - otázky se načítají pouze jednou
+
+**Použití:**
+- Hlavní formulář: `const opatreniOtazky = window.opatreniOtazky;`
+- Auto-save systém: `const opatreniOtazky = window.opatreniOtazky;`
+- Přidání nové otázky: pouze v `script.js` na začátku souboru
+
+**Pozor:** Pokud potřebujete upravit otázky, editujte pouze definici v `script.js`. Změny v `auto-save.js` už nejsou potřeba. 

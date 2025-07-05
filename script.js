@@ -1,3 +1,58 @@
+// 🌍 GLOBÁLNÍ DEFINICE - Mapa opatření a jejich otázek
+// Tento objekt je používán jak v hlavním skriptu, tak v auto-save systému
+window.opatreniOtazky = {
+    'zatepleni-sten': {
+        label: 'Jaká je přibližná plocha obvodových stěn?\n(v m²)',
+        type: 'number',
+        min: 1,
+        placeholder: 'Např. 120',
+    },
+    'zatepleni-strechy': {
+        label: 'Jaká je plocha stropu/střechy k zateplení?\n(v m²)',
+        type: 'number',
+        min: 1,
+        placeholder: 'Např. 80',
+    },
+    'vymena-oken': {
+        label: 'Zadejte počet kusů nebo přibližnou plochu v m²',
+        type: 'number',
+        min: 1,
+        placeholder: 'Např. 10 (ks) nebo 15 (m²)',
+    },
+    'tepelne-cerpadlo': {
+        label: 'Jaký typ čerpadla plánujete?',
+        type: 'radio',
+        options: ['vzduch-voda', 'země-voda', 'nevím'],
+    },
+    'fotovoltaika': {
+        label: 'Jaký výkon FVE systému plánujete?\n(v kWp)',
+        type: 'number',
+        min: 1,
+        placeholder: 'Např. 5',
+    },
+    'ohrev-vody-fv': {
+        label: 'Vyberte:',
+        type: 'radio',
+        options: ['chci jen ohřev vody', 'kombinace s FV'],
+    },
+    'rekuperace': {
+        label: 'Typ plánovaného systému?',
+        type: 'radio',
+        options: ['centrální', 'decentrální', 'nejsem si jistý'],
+    },
+    'destova-voda': {
+        label: 'K jakému účelu chcete dešťovou vodu využít?',
+        type: 'checkbox',
+        options: ['WC', 'zalévání', 'jiné'],
+    },
+    'rizeni-spotreby': {
+        label: 'Plánujete baterii?',
+        type: 'radio',
+        options: ['Ano', 'Ne', 'Zvažuji'],
+    },
+    'rizene-vetrani': null // nemá poddotaz
+};
+
 document.addEventListener('DOMContentLoaded', function() {
     // Inicializace proměnných
     let currentStep = 1;
@@ -28,59 +83,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const jinyExtraField = document.getElementById('jiny-extra-field');
     const jinyNavBtns = document.getElementById('jiny-nav-btns');
 
-    // Mapa opatření a jejich otázek
-    const opatreniOtazky = {
-        'zatepleni-sten': {
-            label: 'Jaká je přibližná plocha obvodových stěn?\n(v m²)',
-            type: 'number',
-            min: 1,
-            placeholder: 'Např. 120',
-        },
-        'zatepleni-strechy': {
-            label: 'Jaká je plocha stropu/střechy k zateplení?\n(v m²)',
-            type: 'number',
-            min: 1,
-            placeholder: 'Např. 80',
-        },
-        'vymena-oken': {
-            label: 'Zadejte počet kusů nebo přibližnou plochu v m²',
-            type: 'number',
-            min: 1,
-            placeholder: 'Např. 10 (ks) nebo 15 (m²)',
-        },
-        'tepelne-cerpadlo': {
-            label: 'Jaký typ čerpadla plánujete?',
-            type: 'radio',
-            options: ['vzduch-voda', 'země-voda', 'nevím'],
-        },
-        'fotovoltaika': {
-            label: 'Jaký výkon FVE systému plánujete?\n(v kWp)',
-            type: 'number',
-            min: 1,
-            placeholder: 'Např. 5',
-        },
-        'ohrev-vody-fv': {
-            label: 'Vyberte:',
-            type: 'radio',
-            options: ['chci jen ohřev vody', 'kombinace s FV'],
-        },
-        'rekuperace': {
-            label: 'Typ plánovaného systému?',
-            type: 'radio',
-            options: ['centrální', 'decentrální', 'nejsem si jistý'],
-        },
-        'destova-voda': {
-            label: 'K jakému účelu chcete dešťovou vodu využít?',
-            type: 'checkbox',
-            options: ['WC', 'zalévání', 'jiné'],
-        },
-        'rizeni-spotreby': {
-            label: 'Plánujete baterii?',
-            type: 'radio',
-            options: ['Ano', 'Ne', 'Zvažuji'],
-        },
-        'rizene-vetrani': null // nemá poddotaz
-    };
+    // Místní odkaz na globální definici pro kompatibilitu
+    const opatreniOtazky = window.opatreniOtazky;
 
     // Ukázkový seznam obcí a PSČ (pro reálný provoz lze nahradit větším seznamem nebo API)
     const obcePsc = [
