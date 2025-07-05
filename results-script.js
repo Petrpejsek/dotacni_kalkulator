@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 "program": "Nová zelená úsporám",
                 "podmínky": "Minimálně 10 cm izolace, zateplovaná plocha 120 m², nutný odborný posudek energetického specialisty, realizace certifikovanou firmou, dosažení min. 30% úspory energie oproti původnímu stavu.",
                 "kombinovatelné_bonusy": [
-                    {"název": "Kombinační bonus", "částka": "až +20 000 Kč"}, 
+                    {"název": "Kombinační bonus", "částka": "až +20 000 Kč"},
                     {"název": "Projektový bonus", "částka": "+5 000 Kč"}
                 ],
                 "přínosy": [
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 "program": "Nová zelená úsporám",
                 "podmínky": "Instalace nového fotovoltaického systému propojeného s vnitřními rozvody elektřiny, připojení k distribuční soustavě, minimální instalovaný výkon 2 kWp, nesmí být již podpořeno jiným dotačním programem.",
                 "kombinovatelné_bonusy": [
-                    {"název": "Bonus za kombinaci s TČ", "částka": "+25 000 Kč"}, 
+                    {"název": "Bonus za kombinaci s TČ", "částka": "+25 000 Kč"},
                     {"název": "Environmentální bonus", "částka": "až +15 000 Kč"}
                 ],
                 "přínosy": [
@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
         "další_informace": {
             "nárok_na_zálohu": true,
             "možnosti_bonusu": [
-                "Bonus za kombinaci více opatření (až +38 500 Kč)", 
+                "Bonus za kombinaci více opatření (až +38 500 Kč)",
                 "Bonus za elektronické podání (+5 000 Kč)"
             ],
             "návratnost": "6 let",
@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error("Chyba při načítání dat z localStorage:", error);
         resultData = testData;
     }
-    
+
     // Funkce pro zobrazení výsledků
     function displayResults(data) {
         // Nastavení úvodního textu
@@ -104,36 +104,36 @@ document.addEventListener('DOMContentLoaded', () => {
         if (introPanel) {
             introPanel.textContent = `✅ ${data.intro_text}`;
         }
-        
+
         // Nastavení statistik v přehledovém panelu
         setupDashboardStats(data);
-        
+
         // Vygenerování karet s doporučenými dotacemi
         generateDotaceCards(data.doporučene_dotace);
-        
+
         // Nastavení souhrnných informací
         updateSummaryPanel(data);
-        
+
         // Setupowanie modálního okna a tlačítek
         setupButtons();
-        
+
         // Nastavení timeline harmonogramu
         setupTimeline(data);
-        
+
         // Nastavení expertního doporučení
         setupExpertRecommendation(data);
-        
+
         // Odstraníme případné "undefined" texty
         removeUndefinedElements();
     }
-    
+
     // Funkce pro odstranění undefined elementů z DOM
     function removeUndefinedElements() {
         // Hledáme všechny textové uzly obsahující "undefined"
         const allElements = document.getElementsByTagName('*');
         for (let i = 0; i < allElements.length; i++) {
             const element = allElements[i];
-            
+
             // Kontrola textových uzlů každého elementu
             for (let j = 0; j < element.childNodes.length; j++) {
                 const node = element.childNodes[j];
@@ -143,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             }
-            
+
             // Kontrola atributů
             if (element.hasAttributes()) {
                 const attrs = element.attributes;
@@ -155,34 +155,34 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     }
-    
+
     // Generuje karty pro doporučené dotace
     function generateDotaceCards(dotace) {
         const dotaceGrid = document.querySelector('.dotace-grid');
         if (!dotaceGrid) return;
-        
+
         // Vyčistit existující obsah
         dotaceGrid.innerHTML = '';
-        
+
         // Přidáme třídu pro rozšířené zobrazení
         dotaceGrid.classList.add('dotace-grid-fullwidth');
-        
+
         // Vytvořit kartu pro každou dotaci
         dotace.forEach(item => {
             // Přeskočíme prázdné položky nebo ty bez názvu
             if (!item || !item.název) return;
-            
+
             const card = document.createElement('div');
             card.className = 'dotace-card';
-            
+
             // Přidat ribbon, pokud je doporučeno
             if (item.priorita === 'vysoká') {
                 card.innerHTML += `<div class="card-ribbon">Doporučeno</div>`;
             }
-            
+
             // Přidat header s ikonou a názvem
             let icon = '🏠'; // Výchozí ikona
-            
+
             // Výběr ikony podle názvu
             if (item.název.toLowerCase().includes('tepelné čerpadlo')) {
                 icon = '🔥';
@@ -197,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (item.název.toLowerCase().includes('střech')) {
                 icon = '🏠';
             }
-            
+
             card.innerHTML += `
                 <div class="dotace-header">
                     <span class="dotace-icon">${icon}</span>
@@ -209,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span class="program-value">${item.program || 'Nová zelená úsporám'}</span>
                 </div>
             `;
-            
+
             // Přidat podmínky získání dotace
             if (item.podmínky) {
                 card.innerHTML += `
@@ -221,13 +221,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
             }
-            
+
             // Přidat přínosy
             if (item.přínosy && item.přínosy.length > 0) {
-                const benefitsList = item.přínosy.map(benefit => 
+                const benefitsList = item.přínosy.map(benefit =>
                     `<li><span class="benefit-icon">${benefit.ikona || '✓'}</span> <strong>${benefit.název || ''}:</strong> ${benefit.popis || ''}</li>`
                 ).join('');
-                
+
                 card.innerHTML += `
                     <div class="dotace-benefits">
                         <h4>Co vám to přinese:</h4>
@@ -238,49 +238,49 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
             }
             // Přidat tagy pro bonusy
-            if (item.kombinovatelné_bonusy && item.kombinovatelné_bonusy.length > 0) {
-                const tagHtml = item.kombinovatelné_bonusy.map(bonus => 
+            if (false && item.kombinovatelné_bonusy && item.kombinovatelné_bonusy.length > 0) {
+                const tagHtml = item.kombinovatelné_bonusy.map(bonus =>
                     `<span class="dotace-tag">${bonus.název || ''} (${bonus.částka || ''})</span>`
                 ).join('');
-                
+
                 card.innerHTML += `
                     <div class="dotace-tags">
                         ${tagHtml}
                     </div>
                 `;
             }
-            
+
             // Přidat info o záloze, pokud je dostupná
-            if (item.zalohova_dotace) {
+            if (item.zalohova_dotace && item.zalohova_procenta) {
                 card.innerHTML += `
                     <div class="dotace-zalohova">
                         <span class="zalohova-badge">✅ Možno čerpat zálohově až ${item.zalohova_procenta || 50}% dotace</span>
                     </div>
                 `;
             }
-            
+
             dotaceGrid.appendChild(card);
         });
     }
-    
+
     // Formátuje podmínky jako seznam
     function formatConditions(conditions) {
         if (!conditions) return '';
-        
+
         // Pokud je řetězec, rozdělíme ho podle čárky a vytvoříme odrážky
         if (typeof conditions === 'string') {
             return conditions.split(', ')
                 .map(condition => `<li>${condition}</li>`)
                 .join('');
-        } 
+        }
         // Pokud je pole, všechny položky obalíme li elementy
         else if (Array.isArray(conditions)) {
             return conditions.map(condition => `<li>${condition}</li>`).join('');
         }
-        
+
         return `<li>${conditions}</li>`;
     }
-    
+
     // Nastavuje souhrnné informace ve spodním panelu
     function updateSummaryPanel(data) {
         // Nastavit celkovou částku
@@ -288,7 +288,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (totalAmount) {
             totalAmount.textContent = `Celkem můžete získat až ${data.celková_dotace}`;
         }
-        
+
         // Nastavit informaci o záloze
         const zalohaInfo = document.querySelector('.summary-item');
         if (zalohaInfo && data.další_informace.nárok_na_zálohu) {
@@ -296,7 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (zalohaInfo) {
             zalohaInfo.style.display = 'none';
         }
-        
+
         // Nastavit seznam bonusů
         const bonusList = document.querySelector('.bonus-list');
         if (bonusList && data.další_informace.možnosti_bonusu) {
@@ -308,18 +308,18 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     }
-    
+
     // Nastavuje statistiky v přehledovém panelu
     function setupDashboardStats(data) {
         const statsContainer = document.querySelector('.stats-container');
         if (!statsContainer) return;
-        
+
         // Nastavení celkové výše dotace
         const dotaceStat = statsContainer.querySelector('.stat-item:nth-child(1) .stat-value');
         if (dotaceStat) {
             dotaceStat.textContent = data.celková_dotace;
         }
-        
+
         // Nastavení doby schválení, pokud je dostupná
         if (data.další_informace.doba_schválení) {
             const schvaleniStat = statsContainer.querySelector('.stat-item:nth-child(2) .stat-value');
@@ -327,7 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 schvaleniStat.textContent = data.další_informace.doba_schválení;
             }
         }
-        
+
         // Nastavení návratnosti investice, pokud je dostupná
         if (data.další_informace.návratnost) {
             const navratnostStat = statsContainer.querySelector('.stat-item:nth-child(3) .stat-value');
@@ -335,7 +335,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 navratnostStat.textContent = data.další_informace.návratnost;
             }
         }
-        
+
         // Nastavení úspory energií, pokud je dostupná
         if (data.další_informace.úspora_energií) {
             const usporaStat = statsContainer.querySelector('.stat-item:nth-child(4) .stat-value');
@@ -344,33 +344,33 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     }
-    
+
     // Nastavení harmonogramu
     function setupTimeline(data) {
         // Tuto funkci můžete implementovat podle potřeby
         // Pro testovací účely používáme statické údaje z HTML
     }
-    
+
     // Nastavení expertního doporučení
     function setupExpertRecommendation(data) {
         // Tuto funkci můžete implementovat podle potřeby
         // Pro testovací účely používáme statické údaje z HTML
     }
-    
+
     // Zpracování formuláře pro zpřesnění výpočtu
     function setupRefinementForm() {
         const form = document.getElementById('refinement-form');
         if (form) {
             form.addEventListener('submit', (e) => {
                 e.preventDefault();
-                
+
                 // Zobrazení načítacího indikátoru
                 const submitBtn = form.querySelector('.refinement-submit');
                 if (submitBtn) {
                     submitBtn.disabled = true;
                     submitBtn.textContent = 'Přepočítávám...';
                 }
-                
+
                 // Shromáždění dat z formuláře
                 const formData = {
                     building_area: form.elements['building-area'].value,
@@ -378,52 +378,52 @@ document.addEventListener('DOMContentLoaded', () => {
                     heating_consumption: form.elements['heating-consumption'].value,
                     roof_area: form.elements['roof-area'].value
                 };
-                
+
                 // Simulace odeslání dat a získání odpovědi (v reálné aplikaci by toto šlo na server)
                 setTimeout(() => {
                     // Simulace úpravy výsledků na základě nových dat
                     let updatedData = JSON.parse(JSON.stringify(resultData));
-                    
+
                     // Úprava výsledků na základě zadaných hodnot
                     if (formData.roof_area && parseInt(formData.roof_area) > 60) {
                         // Pokud je plocha střechy větší než 60m², zvýšíme dotaci na FVE
-                        const fveIndex = updatedData.doporučene_dotace.findIndex(d => 
+                        const fveIndex = updatedData.doporučene_dotace.findIndex(d =>
                             d.název.toLowerCase().includes('fotovoltai'));
-                        
+
                         if (fveIndex !== -1) {
                             // Zvýšení částky FVE
                             updatedData.doporučene_dotace[fveIndex].částka = "120 000 Kč";
                             updatedData.doporučene_dotace[fveIndex].priorita = "vysoká";
-                            
+
                             // Aktualizace celkové částky
                             const oldAmount = parseInt(resultData.celková_dotace.replace(/\D/g, ''));
                             const newAmount = oldAmount + 30000;
                             updatedData.celková_dotace = `${newAmount.toLocaleString()} Kč`;
                         }
                     }
-                    
+
                     // Re-render výsledků s novými daty
                     displayResults(updatedData);
-                    
+
                     // Vrácení tlačítka do původního stavu
                     if (submitBtn) {
                         submitBtn.disabled = false;
                         submitBtn.textContent = 'Přepočítat dotaci';
                     }
-                    
+
                     // Animace posunu na přehled výsledků
                     const dashboardPanel = document.querySelector('.dashboard-panel');
                     if (dashboardPanel) {
                         dashboardPanel.scrollIntoView({ behavior: 'smooth' });
                     }
-                    
+
                     // Zobrazení oznámení o úspěšném přepočítání
                     showNotification('Výpočet byl úspěšně aktualizován');
                 }, 1500);
             });
         }
     }
-    
+
     // Inicializace tlačítek
     function setupButtons() {
         // Tlačítko pro konzultaci
@@ -434,7 +434,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 showContactModal();
             });
         }
-        
+
         // Tlačítko pro kontaktování specialisty
         const expertContact = document.querySelector('.expert-contact');
         if (expertContact) {
@@ -443,17 +443,17 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     }
-    
+
     // Funkce pro zobrazení oznámení
     function showNotification(message) {
         // Kontrola, zda již existuje kontejner pro oznámení
         let notificationContainer = document.querySelector('.notification-container');
-        
+
         if (!notificationContainer) {
             notificationContainer = document.createElement('div');
             notificationContainer.className = 'notification-container';
             document.body.appendChild(notificationContainer);
-            
+
             // Přidání stylů pro notifikace
             const style = document.createElement('style');
             style.innerHTML = `
@@ -484,18 +484,18 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             document.head.appendChild(style);
         }
-        
+
         // Vytvoření a přidání nového oznámení
         const notification = document.createElement('div');
         notification.className = 'notification';
         notification.textContent = message;
         notificationContainer.appendChild(notification);
-        
+
         // Nastavení opacit na 1 pro zobrazení (ve stylu je výchozí hodnota 0)
         setTimeout(() => {
             notification.style.opacity = '1';
         }, 10);
-        
+
         // Odstranění oznámení po 3 sekundách
         setTimeout(() => {
             notification.style.opacity = '0';
@@ -504,12 +504,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 300);
         }, 3000);
     }
-    
+
     // Funkce pro zobrazení modálního okna pro kontaktní údaje
     function showContactModal() {
         // Kontrola, zda již existuje modální okno
         let modal = document.querySelector('.contact-modal');
-        
+
         if (!modal) {
             // Přidání stylů pro modální okno
             const style = document.createElement('style');
@@ -569,11 +569,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             `;
             document.head.appendChild(style);
-            
+
             // Vytvoření modálního okna
             const overlay = document.createElement('div');
             overlay.className = 'modal-overlay';
-            
+
             modal = document.createElement('div');
             modal.className = 'contact-modal';
             modal.innerHTML = `
@@ -596,33 +596,33 @@ document.addEventListener('DOMContentLoaded', () => {
                     <button type="submit" class="modal-submit">Odeslat</button>
                 </form>
             `;
-            
+
             overlay.appendChild(modal);
             document.body.appendChild(overlay);
-            
+
             // Zavření modálního okna
             const closeBtn = modal.querySelector('.modal-close');
             closeBtn.addEventListener('click', () => {
                 overlay.remove();
             });
-            
+
             // Kliknutí mimo modální okno
             overlay.addEventListener('click', (e) => {
                 if (e.target === overlay) {
                     overlay.remove();
                 }
             });
-            
+
             // Zpracování formuláře
             const form = modal.querySelector('.modal-form');
             form.addEventListener('submit', (e) => {
                 e.preventDefault();
-                
+
                 // Simulace odeslání dat
                 const submitBtn = form.querySelector('.modal-submit');
                 submitBtn.disabled = true;
                 submitBtn.textContent = 'Odesílám...';
-                
+
                 setTimeout(() => {
                     overlay.remove();
                     showNotification('Vaše žádost o konzultaci byla odeslána. Brzy vás budeme kontaktovat.');
@@ -630,7 +630,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     }
-    
+
     // Tlačítko pro doporučení dalších možných dotací
     const moreRecommendationsBtn = document.querySelector('.more-recommendations-btn');
     if (moreRecommendationsBtn) {
@@ -638,7 +638,7 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Děkujeme za váš zájem! Funkce pro doporučení dalších dotací bude brzy k dispozici. Pro více informací nás kontaktujte na info@enermio.cz');
         });
     }
-    
+
     // Inicializace zobrazení výsledků
     displayResults(resultData);
     setupRefinementForm();
