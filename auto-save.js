@@ -274,6 +274,39 @@ class KalkulatorAutoSave {
     }
     
     /**
+     * 🆕 Pomocné funkce pro práci s podotázkami (kopie ze script.js)
+     */
+    hasSubQuestions(opatreniKey) {
+        const opatreniOtazky = window.opatreniOtazky;
+        const otazka = opatreniOtazky[opatreniKey];
+        if (!otazka) return false;
+        
+        // Pokud má otázka vlastnost 'type', je to jednoduchá otázka
+        // Pokud nemá 'type', ale má vlastnosti s objekty, jsou to podotázky
+        return !otazka.type && typeof otazka === 'object' && otazka !== null;
+    }
+
+    getSubQuestions(opatreniKey) {
+        const opatreniOtazky = window.opatreniOtazky;
+        const otazka = opatreniOtazky[opatreniKey];
+        if (!this.hasSubQuestions(opatreniKey)) return {};
+        
+        return Object.keys(otazka)
+            .filter(key => typeof otazka[key] === 'object' && otazka[key] !== null && otazka[key].type)
+            .reduce((acc, key) => {
+                acc[key] = otazka[key];
+                return acc;
+            }, {});
+    }
+
+    getSimpleQuestion(opatreniKey) {
+        const opatreniOtazky = window.opatreniOtazky;
+        const otazka = opatreniOtazky[opatreniKey];
+        if (this.hasSubQuestions(opatreniKey)) return null;
+        return otazka;
+    }
+
+    /**
      * 🆕 Generování a obnovení dynamických otázek pro krok 4
      */
     generateAndRestoreDynamicQuestions(data) {
@@ -306,39 +339,17 @@ class KalkulatorAutoSave {
         console.log('🔄 Vyplňuji hodnoty do dynamických polí:', data.doplnujici_udaje);
         
         // Procházíme všechny doplňující údaje
-        Object.entries(data.doplnujici_udaje).forEach(([key, value]) => {
-            // Pokusíme se najít odpovídající pole
-            
-            // 1. Zkusíme najít radio button
-            const radioInput = dynamicQuestionsForm.querySelector(`input[name="${key}"][value="${value}"]`);
-            if (radioInput) {
-                radioInput.checked = true;
-                console.log(`✅ Obnoveno radio pole ${key}: ${value}`);
-                return;
-            }
-            
-            // 2. Zkusíme najít number input podle labelu
-            const labels = dynamicQuestionsForm.querySelectorAll('label.dynamic-label');
-            for (const label of labels) {
-                if (label.textContent === key) {
-                    const input = label.parentElement.querySelector('input[type="number"]');
-                    if (input) {
-                        input.value = value;
-                        console.log(`✅ Obnoveno number pole ${key}: ${value}`);
-                        return;
-                    }
-                }
-            }
-            
-            // 3. Zkusíme najít checkbox skupinu
-            if (Array.isArray(value)) {
-                value.forEach(checkboxValue => {
-                    const checkbox = dynamicQuestionsForm.querySelector(`input[name="${key}[]"][value="${checkboxValue}"]`);
-                    if (checkbox) {
-                        checkbox.checked = true;
-                        console.log(`✅ Obnoveno checkbox ${key}: ${checkboxValue}`);
-                    }
+        Object.entries(data.doplnujici_udaje).forEach(([opatreniKey, opatreniValue]) => {
+            // 🆕 Zkontroluj, zda má opatření podotázky
+            if (this.hasSubQuestions(opatreniKey) && typeof opatreniValue === 'object' && opatreniValue !== null) {
+                // Obnovení podotázek
+                Object.entries(opatreniValue).forEach(([subKey, subValue]) => {
+                    const fullInputName = opatreniKey + '-' + subKey;
+                    this.fillSingleQuestionValue(dynamicQuestionsForm, fullInputName, subValue);
                 });
+            } else {
+                // Obnovení jednoduché otázky
+                this.fillSingleQuestionValue(dynamicQuestionsForm, opatreniKey, opatreniValue);
             }
         });
         
@@ -346,6 +357,40 @@ class KalkulatorAutoSave {
         const nextButtonStep4 = document.querySelector('#step4 .next-btn');
         if (nextButtonStep4 && typeof validateDynamicQuestions === 'function') {
             nextButtonStep4.disabled = !validateDynamicQuestions();
+        }
+    }
+
+    /**
+     * 🆕 Pomocná funkce pro vyplnění hodnoty jedné otázky
+     */
+    fillSingleQuestionValue(dynamicQuestionsForm, inputName, value) {
+        // 1. Zkusíme najít radio button
+        if (typeof value === 'string') {
+            const radioInput = dynamicQuestionsForm.querySelector(`input[name="${inputName}"][value="${value}"]`);
+            if (radioInput) {
+                radioInput.checked = true;
+                console.log(`✅ Obnoveno radio pole ${inputName}: ${value}`);
+                return;
+            }
+        }
+        
+        // 2. Zkusíme najít number input podle name
+        const numberInput = dynamicQuestionsForm.querySelector(`input[name="${inputName}"][type="number"]`);
+        if (numberInput && typeof value === 'string') {
+            numberInput.value = value;
+            console.log(`✅ Obnoveno number pole ${inputName}: ${value}`);
+            return;
+        }
+        
+        // 3. Zkusíme najít checkbox skupinu
+        if (Array.isArray(value)) {
+            value.forEach(checkboxValue => {
+                const checkbox = dynamicQuestionsForm.querySelector(`input[name="${inputName}[]"][value="${checkboxValue}"]`);
+                if (checkbox) {
+                    checkbox.checked = true;
+                    console.log(`✅ Obnoveno checkbox ${inputName}: ${checkboxValue}`);
+                }
+            });
         }
     }
     
@@ -366,89 +411,116 @@ class KalkulatorAutoSave {
         
         // Generujeme otázky pro každé vybrané opatření
         data.opatreni.forEach(opatreni => {
-            const otazka = opatreniOtazky[opatreni];
-            if (!otazka) return;
-            
-            const wrapper = document.createElement('div');
-            wrapper.className = 'dynamic-question';
-            
-            if (otazka.type === 'number') {
-                const row = document.createElement('div');
-                row.className = 'dynamic-question-row';
-                
-                const label = document.createElement('label');
-                label.textContent = otazka.label;
-                label.className = 'dynamic-label';
-                row.appendChild(label);
-                
-                const input = document.createElement('input');
-                input.type = 'number';
-                input.min = otazka.min;
-                input.placeholder = otazka.placeholder;
-                input.className = 'dynamic-input';
-                row.appendChild(input);
-                
-                wrapper.appendChild(row);
-            } else if (otazka.type === 'radio') {
-                const label = document.createElement('label');
-                label.textContent = otazka.label;
-                label.className = 'dynamic-label';
-                wrapper.appendChild(label);
-                
-                const radioGroup = document.createElement('div');
-                radioGroup.className = 'radio-group';
-                
-                otazka.options.forEach(option => {
-                    const radioLabel = document.createElement('label');
-                    radioLabel.className = 'radio-option';
+            // 🆕 Zkontroluj, zda má opatření podotázky
+            if (this.hasSubQuestions(opatreni)) {
+                // Generuj podotázky
+                const subQuestions = this.getSubQuestions(opatreni);
+                Object.keys(subQuestions).forEach(subKey => {
+                    const subQuestion = subQuestions[subKey];
+                    const fullKey = opatreni + '-' + subKey;
                     
-                    const radio = document.createElement('input');
-                    radio.type = 'radio';
-                    radio.name = opatreni;
-                    radio.value = option;
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'dynamic-question';
+                    wrapper.setAttribute('data-main-key', opatreni);
+                    wrapper.setAttribute('data-sub-key', subKey);
                     
-                    const span = document.createElement('span');
-                    span.textContent = option;
-                    
-                    radioLabel.appendChild(radio);
-                    radioLabel.appendChild(span);
-                    radioGroup.appendChild(radioLabel);
+                    this.generateSingleQuestionElement(wrapper, subQuestion, fullKey);
+                    dynamicQuestionsForm.appendChild(wrapper);
                 });
+            } else {
+                // Generuj jednoduchou otázku
+                const simpleQuestion = this.getSimpleQuestion(opatreni);
+                if (!simpleQuestion) return;
                 
-                wrapper.appendChild(radioGroup);
-            } else if (otazka.type === 'checkbox') {
-                const label = document.createElement('label');
-                label.textContent = otazka.label;
-                label.className = 'dynamic-label';
-                wrapper.appendChild(label);
+                const wrapper = document.createElement('div');
+                wrapper.className = 'dynamic-question';
+                wrapper.setAttribute('data-main-key', opatreni);
                 
-                const checkboxGroup = document.createElement('div');
-                checkboxGroup.className = 'checkbox-group';
-                
-                otazka.options.forEach(option => {
-                    const checkboxLabel = document.createElement('label');
-                    checkboxLabel.className = 'checkbox-option';
-                    
-                    const checkbox = document.createElement('input');
-                    checkbox.type = 'checkbox';
-                    checkbox.name = opatreni + '[]';
-                    checkbox.value = option;
-                    
-                    const span = document.createElement('span');
-                    span.textContent = option;
-                    
-                    checkboxLabel.appendChild(checkbox);
-                    checkboxLabel.appendChild(span);
-                    checkboxGroup.appendChild(checkboxLabel);
-                });
-                
-                wrapper.appendChild(checkboxGroup);
+                this.generateSingleQuestionElement(wrapper, simpleQuestion, opatreni);
+                dynamicQuestionsForm.appendChild(wrapper);
             }
-            
-            dynamicQuestionsForm.appendChild(wrapper);
         });
         
         console.log('🔄 Dynamické otázky vygenerovány interně pomocí globální definice');
+    }
+
+    /**
+     * 🆕 Pomocná funkce pro generování jednoho prvku otázky
+     */
+    generateSingleQuestionElement(wrapper, otazka, inputName) {
+        if (otazka.type === 'number') {
+            const row = document.createElement('div');
+            row.className = 'dynamic-question-row';
+            
+            const label = document.createElement('label');
+            label.textContent = otazka.label;
+            label.className = 'dynamic-label';
+            row.appendChild(label);
+            
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.min = otazka.min;
+            input.placeholder = otazka.placeholder;
+            input.className = 'dynamic-input';
+            input.name = inputName;
+            row.appendChild(input);
+            
+            wrapper.appendChild(row);
+        } else if (otazka.type === 'radio') {
+            const label = document.createElement('label');
+            label.textContent = otazka.label;
+            label.className = 'dynamic-label';
+            wrapper.appendChild(label);
+            
+            const radioGroup = document.createElement('div');
+            radioGroup.className = 'radio-group';
+            
+            otazka.options.forEach(option => {
+                const radioLabel = document.createElement('label');
+                radioLabel.className = 'radio-option';
+                
+                const radio = document.createElement('input');
+                radio.type = 'radio';
+                radio.name = inputName;
+                radio.value = option;
+                
+                const span = document.createElement('span');
+                span.textContent = option;
+                
+                radioLabel.appendChild(radio);
+                radioLabel.appendChild(span);
+                radioGroup.appendChild(radioLabel);
+            });
+            
+            wrapper.appendChild(radioGroup);
+        } else if (otazka.type === 'checkbox') {
+            const label = document.createElement('label');
+            label.textContent = otazka.label;
+            label.className = 'dynamic-label';
+            wrapper.appendChild(label);
+            
+            const checkboxGroup = document.createElement('div');
+            checkboxGroup.className = 'checkbox-group';
+            
+            otazka.options.forEach(option => {
+                const checkboxLabel = document.createElement('label');
+                checkboxLabel.className = 'checkbox-option';
+                
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.name = inputName + '[]';
+                checkbox.value = option;
+                
+                const span = document.createElement('span');
+                span.textContent = option;
+                
+                checkboxLabel.appendChild(checkbox);
+                checkboxLabel.appendChild(span);
+                checkboxGroup.appendChild(checkboxLabel);
+            });
+            
+            wrapper.appendChild(checkboxGroup);
+        }
     }
     
     /**

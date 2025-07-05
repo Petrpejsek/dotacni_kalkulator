@@ -1,5 +1,6 @@
 // 🌍 GLOBÁLNÍ DEFINICE - Mapa opatření a jejich otázek
 // Tento objekt je používán jak v hlavním skriptu, tak v auto-save systému
+// Podporuje jak jednoduché otázky, tak více podotázek pro jednu sekci
 window.opatreniOtazky = {
     'zatepleni-sten': {
         label: 'Jaká je přibližná plocha obvodových stěn?\n(v m²)',
@@ -25,10 +26,23 @@ window.opatreniOtazky = {
         options: ['vzduch-voda', 'země-voda', 'nevím'],
     },
     'fotovoltaika': {
-        label: 'Jaký výkon FVE systému plánujete?\n(v kWp)',
-        type: 'number',
-        min: 1,
-        placeholder: 'Např. 5',
+        // 🆕 Více podotázek pro fotovoltaiku
+        'pozadovany-vykon': {
+            label: 'Jaký výkon FVE systému plánujete?\n(v kWp)',
+            type: 'number',
+            min: 1,
+            placeholder: 'Např. 5',
+        },
+        'strecha-na-sever': {
+            label: 'Jaká je orientace vaší střechy?',
+            type: 'radio',
+            options: ['jih', 'jihovýchod', 'jihozápad', 'východ', 'západ', 'sever', 'nevím'],
+        },
+        'stav-strechy': {
+            label: 'Jaký je stav střechy?',
+            type: 'radio',
+            options: ['dobrý', 'nutná drobná oprava', 'nutná větší oprava', 'nevím'],
+        }
     },
     'ohrev-vody-fv': {
         label: 'Vyberte:',
@@ -85,6 +99,34 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Místní odkaz na globální definici pro kompatibilitu
     const opatreniOtazky = window.opatreniOtazky;
+
+    // 🆕 Pomocné funkce pro práci s podotázkami
+    function hasSubQuestions(opatreniKey) {
+        const otazka = opatreniOtazky[opatreniKey];
+        if (!otazka) return false;
+        
+        // Pokud má otázka vlastnost 'type', je to jednoduchá otázka
+        // Pokud nemá 'type', ale má vlastnosti s objekty, jsou to podotázky
+        return !otazka.type && typeof otazka === 'object' && otazka !== null;
+    }
+
+    function getSubQuestions(opatreniKey) {
+        const otazka = opatreniOtazky[opatreniKey];
+        if (!hasSubQuestions(opatreniKey)) return {};
+        
+        return Object.keys(otazka)
+            .filter(key => typeof otazka[key] === 'object' && otazka[key] !== null && otazka[key].type)
+            .reduce((acc, key) => {
+                acc[key] = otazka[key];
+                return acc;
+            }, {});
+    }
+
+    function getSimpleQuestion(opatreniKey) {
+        const otazka = opatreniOtazky[opatreniKey];
+        if (hasSubQuestions(opatreniKey)) return null;
+        return otazka;
+    }
 
     // Ukázkový seznam obcí a PSČ (pro reálný provoz lze nahradit větším seznamem nebo API)
     const obcePsc = [
@@ -319,87 +361,38 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        // Pro každý vybraný checkbox generuj otázku
+        // Pro každý vybraný checkbox generuj otázku(y)
         checked.forEach(cb => {
             const key = cb.value;
-            const otazka = opatreniOtazky[key];
-            if (!otazka) return;
             
-            const wrapper = document.createElement('div');
-            wrapper.className = 'dynamic-question';
-            
-            // Zjisti, zda je otázka nepovinná
-            const isOptional = otazka.optional === true;
-            
-            if (otazka.type === 'number') {
-                const row = document.createElement('div');
-                row.className = 'dynamic-question-row';
-                const label = document.createElement('label');
-                label.textContent = otazka.label;
-                label.className = 'dynamic-label';
-                row.appendChild(label);
-                const input = document.createElement('input');
-                input.type = 'number';
-                input.min = otazka.min;
-                input.placeholder = otazka.placeholder;
-                input.className = 'dynamic-input';
-                if (!isOptional) input.required = true;
-                row.appendChild(input);
-                wrapper.appendChild(row);
-                if (isOptional) {
-                    const optText = document.createElement('div');
-                    optText.className = 'dynamic-optional';
-                    optText.textContent = 'Nepovinný údaj';
-                    wrapper.appendChild(optText);
-                }
-            } else if (otazka.type === 'radio') {
-                const label = document.createElement('label');
-                label.textContent = otazka.label;
-                label.className = 'dynamic-label';
-                wrapper.appendChild(label);
-                otazka.options.forEach(opt => {
-                    const radioLabel = document.createElement('label');
-                    radioLabel.className = 'dynamic-radio';
-                    const radio = document.createElement('input');
-                    radio.type = 'radio';
-                    radio.name = key;
-                    radio.value = opt;
-                    if (!isOptional) radio.required = true;
-                    radioLabel.appendChild(radio);
-                    radioLabel.appendChild(document.createTextNode(' ' + opt));
-                    wrapper.appendChild(radioLabel);
+            // 🆕 Zkontroluj, zda má opatření podotázky
+            if (hasSubQuestions(key)) {
+                // Generuj podotázky
+                const subQuestions = getSubQuestions(key);
+                Object.keys(subQuestions).forEach(subKey => {
+                    const subQuestion = subQuestions[subKey];
+                    const fullKey = key + '-' + subKey; // např. "fotovoltaika-pozadovany-vykon"
+                    
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'dynamic-question';
+                    wrapper.setAttribute('data-main-key', key);
+                    wrapper.setAttribute('data-sub-key', subKey);
+                    
+                    generateSingleQuestion(wrapper, subQuestion, fullKey, subQuestion.optional === true);
+                    dynamicQuestionsForm.appendChild(wrapper);
                 });
-                if (isOptional) {
-                    const optText = document.createElement('div');
-                    optText.className = 'dynamic-optional';
-                    optText.textContent = 'Nepovinný údaj';
-                    wrapper.appendChild(optText);
-                }
-            } else if (otazka.type === 'checkbox') {
-                const label = document.createElement('label');
-                label.textContent = otazka.label;
-                label.className = 'dynamic-label';
-                wrapper.appendChild(label);
-                otazka.options.forEach(opt => {
-                    const checkLabel = document.createElement('label');
-                    checkLabel.className = 'dynamic-checkbox';
-                    const checkbox = document.createElement('input');
-                    checkbox.type = 'checkbox';
-                    checkbox.name = key + '[]';
-                    checkbox.value = opt;
-                    checkLabel.appendChild(checkbox);
-                    checkLabel.appendChild(document.createTextNode(' ' + opt));
-                    wrapper.appendChild(checkLabel);
-                });
-                if (isOptional) {
-                    const optText = document.createElement('div');
-                    optText.className = 'dynamic-optional';
-                    optText.textContent = 'Nepovinný údaj';
-                    wrapper.appendChild(optText);
-                }
+            } else {
+                // Generuj jednoduchou otázku
+                const simpleQuestion = getSimpleQuestion(key);
+                if (!simpleQuestion) return;
+                
+                const wrapper = document.createElement('div');
+                wrapper.className = 'dynamic-question';
+                wrapper.setAttribute('data-main-key', key);
+                
+                generateSingleQuestion(wrapper, simpleQuestion, key, simpleQuestion.optional === true);
+                dynamicQuestionsForm.appendChild(wrapper);
             }
-            
-            dynamicQuestionsForm.appendChild(wrapper);
         });
         
         // Pokud je více než 5 otázek, přidej extra padding pro lepší scrollování
@@ -408,23 +401,111 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // 🆕 Pomocná funkce pro generování jedné otázky
+    function generateSingleQuestion(wrapper, otazka, inputName, isOptional) {
+        if (otazka.type === 'number') {
+            const row = document.createElement('div');
+            row.className = 'dynamic-question-row';
+            const label = document.createElement('label');
+            label.textContent = otazka.label;
+            label.className = 'dynamic-label';
+            row.appendChild(label);
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.min = otazka.min;
+            input.placeholder = otazka.placeholder;
+            input.className = 'dynamic-input';
+            input.name = inputName;
+            if (!isOptional) input.required = true;
+            row.appendChild(input);
+            wrapper.appendChild(row);
+            if (isOptional) {
+                const optText = document.createElement('div');
+                optText.className = 'dynamic-optional';
+                optText.textContent = 'Nepovinný údaj';
+                wrapper.appendChild(optText);
+            }
+        } else if (otazka.type === 'radio') {
+            const label = document.createElement('label');
+            label.textContent = otazka.label;
+            label.className = 'dynamic-label';
+            wrapper.appendChild(label);
+            otazka.options.forEach(opt => {
+                const radioLabel = document.createElement('label');
+                radioLabel.className = 'dynamic-radio';
+                const radio = document.createElement('input');
+                radio.type = 'radio';
+                radio.name = inputName;
+                radio.value = opt;
+                if (!isOptional) radio.required = true;
+                radioLabel.appendChild(radio);
+                radioLabel.appendChild(document.createTextNode(' ' + opt));
+                wrapper.appendChild(radioLabel);
+            });
+            if (isOptional) {
+                const optText = document.createElement('div');
+                optText.className = 'dynamic-optional';
+                optText.textContent = 'Nepovinný údaj';
+                wrapper.appendChild(optText);
+            }
+        } else if (otazka.type === 'checkbox') {
+            const label = document.createElement('label');
+            label.textContent = otazka.label;
+            label.className = 'dynamic-label';
+            wrapper.appendChild(label);
+            otazka.options.forEach(opt => {
+                const checkLabel = document.createElement('label');
+                checkLabel.className = 'dynamic-checkbox';
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.name = inputName + '[]';
+                checkbox.value = opt;
+                checkLabel.appendChild(checkbox);
+                checkLabel.appendChild(document.createTextNode(' ' + opt));
+                wrapper.appendChild(checkLabel);
+            });
+            if (isOptional) {
+                const optText = document.createElement('div');
+                optText.className = 'dynamic-optional';
+                optText.textContent = 'Nepovinný údaj';
+                wrapper.appendChild(optText);
+            }
+        }
+    }
+
     // Validace vyplnění všech povinných polí v kroku 4
     function validateDynamicQuestions() {
         if (!dynamicQuestionsForm) return false;
         const requiredInputs = dynamicQuestionsForm.querySelectorAll('input[required]');
         if (requiredInputs.length === 0) return true;
+        
+        // Seskupíme povinné inputy podle jména pro radio buttony
+        const inputGroups = {};
         for (let input of requiredInputs) {
-            if (input.type === 'radio') {
-                const name = input.name;
+            const name = input.name;
+            if (!inputGroups[name]) {
+                inputGroups[name] = [];
+            }
+            inputGroups[name].push(input);
+        }
+        
+        // Validujeme každou skupinu
+        for (const [name, inputs] of Object.entries(inputGroups)) {
+            const firstInput = inputs[0];
+            
+            if (firstInput.type === 'radio') {
+                // Pro radio buttony: alespoň jeden musí být vybrán
                 if (!dynamicQuestionsForm.querySelector('input[name="' + name + '"]:checked')) {
                     return false;
                 }
-            } else if (input.type === 'number') {
-                if (!input.value || Number(input.value) < Number(input.min)) {
+            } else if (firstInput.type === 'number') {
+                // Pro number inputy: hodnota musí být vyplněna a >= min
+                if (!firstInput.value || Number(firstInput.value) < Number(firstInput.min)) {
                     return false;
                 }
             }
         }
+        
         return true;
     }
 
@@ -447,19 +528,59 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (window.kalkulatorAutoSave) {
                     const doplnujiciUdaje = {};
                     
-                    // Sběr všech vyplněných polí z dynamického formuláře
-                    const inputs = dynamicQuestionsForm.querySelectorAll('input');
-                    inputs.forEach(input => {
-                        if (input.type === 'radio' && input.checked) {
-                            doplnujiciUdaje[input.name] = input.value;
-                        } else if (input.type === 'number' && input.value) {
-                            doplnujiciUdaje[input.parentElement.querySelector('label').textContent] = input.value;
-                        } else if (input.type === 'checkbox' && input.checked) {
-                            const fieldName = input.name.replace('[]', '');
-                            if (!doplnujiciUdaje[fieldName]) {
-                                doplnujiciUdaje[fieldName] = [];
+                    // Získej aktuální vybrané opatření
+                    const opatreni = Array.from(document.querySelectorAll('#step3 input[type="checkbox"]:checked'))
+                        .map(cb => cb.value);
+                    
+                    // Sběr dat podle struktury opatření
+                    opatreni.forEach(op => {
+                        if (hasSubQuestions(op)) {
+                            // Sber data z podotázek
+                            const subQuestions = getSubQuestions(op);
+                            doplnujiciUdaje[op] = {};
+                            
+                            Object.keys(subQuestions).forEach(subKey => {
+                                const fullInputName = op + '-' + subKey;
+                                const inputs = dynamicQuestionsForm.querySelectorAll(`input[name="${fullInputName}"], input[name^="${fullInputName}["]`);
+                                
+                                if (inputs.length > 0) {
+                                    if (inputs[0].type === 'radio') {
+                                        const checkedRadio = Array.from(inputs).find(input => input.checked);
+                                        if (checkedRadio) {
+                                            doplnujiciUdaje[op][subKey] = checkedRadio.value;
+                                        }
+                                    } else if (inputs[0].type === 'checkbox') {
+                                        const checkedBoxes = Array.from(inputs).filter(cb => cb.checked).map(cb => cb.value);
+                                        if (checkedBoxes.length > 0) {
+                                            doplnujiciUdaje[op][subKey] = checkedBoxes;
+                                        }
+                                    } else if (inputs[0].type === 'number') {
+                                        if (inputs[0].value) {
+                                            doplnujiciUdaje[op][subKey] = inputs[0].value;
+                                        }
+                                    }
+                                }
+                            });
+                        } else {
+                            // Sber data z jednoduché otázky
+                            const inputs = dynamicQuestionsForm.querySelectorAll(`input[name="${op}"], input[name^="${op}["]`);
+                            if (inputs.length > 0) {
+                                if (inputs[0].type === 'radio') {
+                                    const checkedRadio = Array.from(inputs).find(input => input.checked);
+                                    if (checkedRadio) {
+                                        doplnujiciUdaje[op] = checkedRadio.value;
+                                    }
+                                } else if (inputs[0].type === 'checkbox') {
+                                    const checkedBoxes = Array.from(inputs).filter(cb => cb.checked).map(cb => cb.value);
+                                    if (checkedBoxes.length > 0) {
+                                        doplnujiciUdaje[op] = checkedBoxes;
+                                    }
+                                } else if (inputs[0].type === 'number') {
+                                    if (inputs[0].value) {
+                                        doplnujiciUdaje[op] = inputs[0].value;
+                                    }
+                                }
                             }
-                            doplnujiciUdaje[fieldName].push(input.value);
                         }
                     });
                     
@@ -780,19 +901,53 @@ function collectFormData() {
     const detailyOpatreni = {};
     if (document.getElementById('dynamic-questions')) {
         opatreni.forEach(op => {
-            const inputs = document.querySelectorAll(`input[name="${op}"], input[name^="${op}["]`);
-            if (inputs.length > 0) {
-                if (inputs[0].type === 'radio') {
-                    const checkedRadio = Array.from(inputs).find(input => input.checked);
-                    if (checkedRadio) {
-                        detailyOpatreni[op] = checkedRadio.value;
+            // 🆕 Zkontroluj, zda má opatření podotázky
+            if (hasSubQuestions(op)) {
+                // Sber data z podotázek
+                const subQuestions = getSubQuestions(op);
+                detailyOpatreni[op] = {};
+                
+                Object.keys(subQuestions).forEach(subKey => {
+                    const fullInputName = op + '-' + subKey;
+                    const inputs = document.querySelectorAll(`input[name="${fullInputName}"], input[name^="${fullInputName}["]`);
+                    
+                    if (inputs.length > 0) {
+                        if (inputs[0].type === 'radio') {
+                            const checkedRadio = Array.from(inputs).find(input => input.checked);
+                            if (checkedRadio) {
+                                detailyOpatreni[op][subKey] = checkedRadio.value;
+                            }
+                        } else if (inputs[0].type === 'checkbox') {
+                            const checkedBoxes = Array.from(inputs).filter(cb => cb.checked).map(cb => cb.value);
+                            if (checkedBoxes.length > 0) {
+                                detailyOpatreni[op][subKey] = checkedBoxes;
+                            }
+                        } else if (inputs[0].type === 'number') {
+                            if (inputs[0].value) {
+                                detailyOpatreni[op][subKey] = inputs[0].value;
+                            }
+                        }
                     }
-                } else if (inputs[0].type === 'checkbox') {
-                    detailyOpatreni[op] = Array.from(inputs)
-                        .filter(cb => cb.checked)
-                        .map(cb => cb.value);
-                } else {
-                    detailyOpatreni[op] = inputs[0].value;
+                });
+            } else {
+                // Sber data z jednoduché otázky
+                const inputs = document.querySelectorAll(`input[name="${op}"], input[name^="${op}["]`);
+                if (inputs.length > 0) {
+                    if (inputs[0].type === 'radio') {
+                        const checkedRadio = Array.from(inputs).find(input => input.checked);
+                        if (checkedRadio) {
+                            detailyOpatreni[op] = checkedRadio.value;
+                        }
+                    } else if (inputs[0].type === 'checkbox') {
+                        const checkedBoxes = Array.from(inputs).filter(cb => cb.checked).map(cb => cb.value);
+                        if (checkedBoxes.length > 0) {
+                            detailyOpatreni[op] = checkedBoxes;
+                        }
+                    } else if (inputs[0].type === 'number') {
+                        if (inputs[0].value) {
+                            detailyOpatreni[op] = inputs[0].value;
+                        }
+                    }
                 }
             }
         });
