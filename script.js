@@ -547,7 +547,7 @@ function redirectToResults() {
         apiUrl = 'http://localhost/dotacni_kalkulator/index.php';
     } else if (window.location.hostname === 'enermio.cz' || window.location.hostname === 'www.enermio.cz') {
         // Lokální vývoj - backend běží na portu 3000
-        apiUrl = '/dotacni-kalkulator/api/submit-dotace';
+        apiUrl = '/dotacni-kalkulator/store-form.php';
     } else {
         // Production - PHP server
         apiUrl = '/index.php';

@@ -8,9 +8,9 @@
 // Konfigurace databáze
 $db_config = [
     'host' => 'localhost',
-    'username' => 'root',
-    'password' => '',
-    'database' => 'dotacni_kalkulator_db',
+    'username' => 'enermio_cz',
+    'password' => 'cucqKsaOkiXuz2kg',
+    'database' => 'enermio_cz',
     'charset' => 'utf8mb4'
 ];
 

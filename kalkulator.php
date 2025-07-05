@@ -1,4 +1,16 @@
-<!DOCTYPE html>
+<?php
+
+$config = require_once 'config.php';
+
+
+//ukladat do logu requesty a response do AI vcetne casu pozadavku
+//dotace-tags neobsahují nazev a bonus
+//udelat at to pri zahajeni kalkulatoru pri prvnim POST uz vlozi zaznam do DB a da si to do GETu nejaky identifikator na pokracovani
+
+
+
+
+?><!DOCTYPE html>
 <html lang="cs">
 <head>
     <meta charset="UTF-8">

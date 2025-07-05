@@ -83,9 +83,16 @@ class DotacniKalkulatorDB {
      * Uložení hlavní žádosti
      */
     private function ulozitHlavniZadost($uuid, $form_data, $ip_address, $user_agent) {
+
+        $utm_zdroj = NULL;
+        if (isset($_SESSION["sledovac"])) {
+            $utm_zdroj = $_SESSION["sledovac"];
+        }
+
+
         $sql = "INSERT INTO dotacni_kalkulator_zadosti 
-                (uuid, typ_nemovitosti, rok_vystavby, ip_adresa, user_agent) 
-                VALUES (?, ?, ?, ?, ?)";
+                (uuid, typ_nemovitosti, rok_vystavby, ip_adresa, user_agent, utm_zdroj) 
+                VALUES (?, ?, ?, ?, ?, ?)";
         
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([
@@ -93,7 +100,8 @@ class DotacniKalkulatorDB {
             $form_data['typ_nemovitosti'],
             $form_data['rok_vystavby'] ?? '',
             $ip_address,
-            $user_agent
+            $user_agent,
+            $utm_zdroj,
         ]);
         
         return $this->pdo->lastInsertId();

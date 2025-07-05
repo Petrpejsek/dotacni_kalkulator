@@ -237,7 +237,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
             }
-            
             // Přidat tagy pro bonusy
             if (item.kombinovatelné_bonusy && item.kombinovatelné_bonusy.length > 0) {
                 const tagHtml = item.kombinovatelné_bonusy.map(bonus => 
