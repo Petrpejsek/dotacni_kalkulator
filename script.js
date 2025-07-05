@@ -133,11 +133,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Krok 1: Po kliknutí na možnost automaticky přejdi na další krok nebo zobraz input pro Jiný typ
     optionButtonsStep1.forEach(button => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', async function() {
             optionButtonsStep1.forEach(btn => btn.classList.remove('selected'));
             this.classList.add('selected');
             const selectedValue = this.getAttribute('data-value');
             selectedStep1 = selectedValue;
+            
+            // 🆕 AUTO-SAVE: Vytvoření nové žádosti při prvním výběru
+            try {
+                if (window.kalkulatorAutoSave && !window.kalkulatorAutoSave.getCurrentUUID()) {
+                    await window.kalkulatorAutoSave.createNewRequest(selectedValue);
+                    console.log('🆕 Nová žádost vytvořena s UUID');
+                }
+            } catch (error) {
+                console.error('❌ Chyba při vytváření žádosti:', error);
+                // Pokračujeme i při chybě auto-save
+            }
             
             if (selectedValue === 'jiny') {
                 // Zobrazit pole pro jiný typ nemovitosti a navigační tlačítka
@@ -157,7 +168,20 @@ document.addEventListener('DOMContentLoaded', function() {
                         jinyInputNext.disabled = this.value.trim() === '';
                     });
                     
-                    jinyInputNext.addEventListener('click', function() {
+                    jinyInputNext.addEventListener('click', async function() {
+                        // 🆕 AUTO-SAVE: Uložení vlastního typu nemovitosti
+                        try {
+                            const customType = jinyInput.value.trim();
+                            if (window.kalkulatorAutoSave) {
+                                await window.kalkulatorAutoSave.saveStepData(1, {
+                                    typ_nemovitosti: 'jiny',
+                                    vlastni_typ: customType
+                                });
+                            }
+                        } catch (error) {
+                            console.error('❌ Chyba při ukládání vlastního typu:', error);
+                        }
+                        
                         currentStep = 2;
                         updateProgress();
                         showStep(currentStep);
@@ -166,6 +190,17 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 // Při kliknutí na jiné tlačítko než "Jiný" skryjeme navigační tlačítka a input pole
                 jinyExtraField.style.display = 'none';
+                
+                // 🆕 AUTO-SAVE: Uložení standardního typu nemovitosti
+                try {
+                    if (window.kalkulatorAutoSave) {
+                        await window.kalkulatorAutoSave.saveStepData(1, {
+                            typ_nemovitosti: selectedValue
+                        });
+                    }
+                } catch (error) {
+                    console.error('❌ Chyba při ukládání typu nemovitosti:', error);
+                }
                 
                 // Rovnou přejdeme na další krok
                 currentStep = 2;
@@ -177,9 +212,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Krok 2: Po kliknutí na možnost automaticky přejdi na další krok
     optionButtonsStep2.forEach(button => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', async function() {
             optionButtonsStep2.forEach(btn => btn.classList.remove('selected'));
             this.classList.add('selected');
+            const selectedValue = this.getAttribute('data-value');
+            
+            // 🆕 AUTO-SAVE: Uložení roku výstavby
+            try {
+                if (window.kalkulatorAutoSave) {
+                    await window.kalkulatorAutoSave.saveStepData(2, {
+                        rok_vystavby: selectedValue
+                    });
+                }
+            } catch (error) {
+                console.error('❌ Chyba při ukládání roku výstavby:', error);
+            }
+            
             currentStep = 3;
             updateProgress();
             showStep(currentStep);
@@ -207,7 +255,22 @@ document.addEventListener('DOMContentLoaded', function() {
             cb.addEventListener('change', updateNextBtnStep3);
         });
         updateNextBtnStep3();
-        nextButtonStep3.addEventListener('click', function() {
+        nextButtonStep3.addEventListener('click', async function() {
+            // 🆕 AUTO-SAVE: Uložení vybraných opatření
+            try {
+                if (window.kalkulatorAutoSave) {
+                    const selectedOpatreni = Array.from(checkboxesStep3)
+                        .filter(cb => cb.checked)
+                        .map(cb => cb.value);
+                    
+                    await window.kalkulatorAutoSave.saveStepData(3, {
+                        opatreni: selectedOpatreni
+                    });
+                }
+            } catch (error) {
+                console.error('❌ Chyba při ukládání opatření:', error);
+            }
+            
             currentStep = 4;
             updateProgress();
             showStep(currentStep);
@@ -372,8 +435,38 @@ document.addEventListener('DOMContentLoaded', function() {
             nextButtonStep4.disabled = !(allOptional || validateDynamicQuestions());
         });
         // Při generování otázek nastavíme tlačítko podle povinnosti
-        nextButtonStep4.addEventListener('click', function(e) {
+        nextButtonStep4.addEventListener('click', async function(e) {
             e.preventDefault();
+            
+            // 🆕 AUTO-SAVE: Uložení doplňujících údajů
+            try {
+                if (window.kalkulatorAutoSave) {
+                    const doplnujiciUdaje = {};
+                    
+                    // Sběr všech vyplněných polí z dynamického formuláře
+                    const inputs = dynamicQuestionsForm.querySelectorAll('input');
+                    inputs.forEach(input => {
+                        if (input.type === 'radio' && input.checked) {
+                            doplnujiciUdaje[input.name] = input.value;
+                        } else if (input.type === 'number' && input.value) {
+                            doplnujiciUdaje[input.parentElement.querySelector('label').textContent] = input.value;
+                        } else if (input.type === 'checkbox' && input.checked) {
+                            const fieldName = input.name.replace('[]', '');
+                            if (!doplnujiciUdaje[fieldName]) {
+                                doplnujiciUdaje[fieldName] = [];
+                            }
+                            doplnujiciUdaje[fieldName].push(input.value);
+                        }
+                    });
+                    
+                    await window.kalkulatorAutoSave.saveStepData(4, {
+                        doplnujici_udaje: doplnujiciUdaje
+                    });
+                }
+            } catch (error) {
+                console.error('❌ Chyba při ukládání doplňujících údajů:', error);
+            }
+            
             currentStep = 5;
             updateProgress();
             showStep(currentStep);
@@ -437,8 +530,26 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     // Krok 5: Pokračovat (zatím jen přechod na další krok)
     if (nextButtonStep5) {
-        nextButtonStep5.addEventListener('click', function(e) {
+        nextButtonStep5.addEventListener('click', async function(e) {
             e.preventDefault();
+            
+            // 🆕 AUTO-SAVE: Uložení lokality
+            try {
+                if (window.kalkulatorAutoSave) {
+                    const lokalita = {
+                        adresa: uliceInput ? uliceInput.value.trim() : '',
+                        mesto: mestoInput ? mestoInput.value.trim() : '',
+                        psc: pscInput ? pscInput.value.trim() : ''
+                    };
+                    
+                    await window.kalkulatorAutoSave.saveStepData(5, {
+                        lokalita: lokalita
+                    });
+                }
+            } catch (error) {
+                console.error('❌ Chyba při ukládání lokality:', error);
+            }
+            
             // Pokud byl v kroku 1 vybrán rodinný nebo rekreační dům, zobraz krok 6, jinak přeskoč na 7
             if (selectedStep1 === 'rodinny-dum' || selectedStep1 === 'rekracni-dum') {
                 currentStep = 6;
@@ -464,8 +575,24 @@ document.addEventListener('DOMContentLoaded', function() {
     // Krok 6: Pokračovat
     const nextButtonStep6 = step6 ? step6.querySelector('.next-btn') : null;
     if (nextButtonStep6) {
-        nextButtonStep6.addEventListener('click', function(e) {
+        nextButtonStep6.addEventListener('click', async function(e) {
             e.preventDefault();
+            
+            // 🆕 AUTO-SAVE: Uložení sociální situace
+            try {
+                if (window.kalkulatorAutoSave) {
+                    const socialniSituace = Array.from(
+                        document.querySelectorAll('#step6 input[name="social"]:checked')
+                    ).map(checkbox => checkbox.value);
+                    
+                    await window.kalkulatorAutoSave.saveStepData(6, {
+                        socialni_situace: socialniSituace
+                    });
+                }
+            } catch (error) {
+                console.error('❌ Chyba při ukládání sociální situace:', error);
+            }
+            
             currentStep = 7;
             updateProgress();
             showStep(currentStep);
@@ -498,14 +625,31 @@ document.addEventListener('DOMContentLoaded', function() {
         // Inicializace stavu tlačítka
         nextButtonStep7.disabled = true;
         // Ošetření submitu formuláře
-        kontaktForm.addEventListener('submit', function(e) {
+        kontaktForm.addEventListener('submit', async function(e) {
             e.preventDefault();
+            
             if (validateKontaktForm()) {
-                // Zde můžete zobrazit výsledek nebo přejít na další krok
-                alert('Děkujeme! Výsledek vám bude zobrazen.');
-                // currentStep = 8; // případně další krok
-                // updateProgress();
-                // showStep(currentStep);
+                // 🆕 AUTO-SAVE: Uložení kontaktních údajů před finálním odesláním
+                try {
+                    if (window.kalkulatorAutoSave) {
+                        const kontakt = {
+                            jmeno: jmenoInput ? jmenoInput.value.trim() : '',
+                            email: emailInput ? emailInput.value.trim() : '',
+                            telefon: document.getElementById('telefon-input') ? document.getElementById('telefon-input').value.trim() : '',
+                            souhlas: souhlasInput ? souhlasInput.checked : false
+                        };
+                        
+                        await window.kalkulatorAutoSave.saveStepData(7, {
+                            kontakt: kontakt
+                        });
+                    }
+                } catch (error) {
+                    console.error('❌ Chyba při ukládání kontaktních údajů:', error);
+                    // Pokračujeme i při chybě auto-save
+                }
+                
+                // Pokračujeme s původní funkcionalitou
+                redirectToResults();
             }
         });
     }

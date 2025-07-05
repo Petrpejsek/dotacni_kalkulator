@@ -20,6 +20,13 @@ class DotacniKalkulatorDB {
     }
     
     /**
+     * Získání PDO instance pro externí použití
+     */
+    public function getPDO() {
+        return $this->pdo;
+    }
+    
+    /**
      * Uložení kompletních dat z formuláře
      */
     public function ulozitFormularData($form_data) {

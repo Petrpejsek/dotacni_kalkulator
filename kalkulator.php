@@ -268,6 +268,7 @@ $config = require_once 'config.php';
         </div>
     </div>
 
+    <script src="auto-save.js"></script>
     <script src="script.js"></script>
     <script src="nocache.js"></script>
 </body>

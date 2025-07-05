@@ -1,8 +1,10 @@
 <?php
-// Načtení konfigurace a databázové třídy
-$config = require_once 'config.php';
-require_once 'database_handler.php';
+/**
+ * Zpracování formuláře dotačního kalkulátoru
+ * Přijímá data z formuláře a vrací výsledky od OpenAI asistenta
+ */
 
+// HTTP hlavičky
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
@@ -21,12 +23,94 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit();
 }
 
-// Načtení konfigurace
+// Načtení konfigurace a databázové třídy
+$config = require_once 'config.php';
+require_once 'database_handler.php';
+
+// Získání konfigurací
+$db_config = $config['database'];
 $openai_api_key = $config['openai']['api_key'];
 $assistant_id = $config['openai']['assistant_id'];
 
+// Globální proměnné pro logování
+$db_connection = null;
+$current_zadost_id = null;
+
+try {
+    // Inicializace databáze
+    $db_handler = new DotacniKalkulatorDB($db_config);
+    $db_connection = $db_handler->getPDO();
+} catch (Exception $e) {
+    error_log("Chyba připojení k databázi: " . $e->getMessage());
+}
+
+// Funkce pro logování OpenAI komunikace
+function logOpenAIRequest($url, $request_data, $response_data, $thread_id = null, $run_id = null, $status = 'success', $duration = null) {
+    global $db_connection, $current_zadost_id;
+    
+    if (!$db_connection) {
+        error_log("Databáze není dostupná pro logování OpenAI");
+        return;
+    }
+    
+    try {
+        // Získání IP adresy a User Agent
+        $ip_address = getClientIP();
+        $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
+        
+        // Určení akce podle URL
+        $action = 'openai_request';
+        if (strpos($url, '/threads/') !== false && strpos($url, '/messages') !== false) {
+            $action = 'openai_create_message';
+        } elseif (strpos($url, '/threads/') !== false && strpos($url, '/runs') !== false) {
+            $action = 'openai_create_run';
+        } elseif (strpos($url, '/threads') !== false && strpos($url, '/messages') === false) {
+            $action = 'openai_create_thread';
+        }
+        
+        // Příprava dat pro logování
+        $request_json = is_string($request_data) ? $request_data : json_encode($request_data, JSON_UNESCAPED_UNICODE);
+        $response_json = is_string($response_data) ? $response_data : json_encode($response_data, JSON_UNESCAPED_UNICODE);
+        
+        // Zkrácení příliš dlouhých dat pro databázi
+        if (strlen($request_json) > 65000) {
+            $request_json = substr($request_json, 0, 65000) . '... [zkráceno]';
+        }
+        if (strlen($response_json) > 65000) {
+            $response_json = substr($response_json, 0, 65000) . '... [zkráceno]';
+        }
+        
+        // Vložení do databáze
+        $sql = "INSERT INTO dotacni_kalkulator_logy 
+                (zadost_id, akce, popis, ip_adresa, user_agent, openai_request, openai_response, openai_thread_id, openai_run_id, openai_status, openai_duration) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        
+        $stmt = $db_connection->prepare($sql);
+        $stmt->execute([
+            $current_zadost_id,
+            $action,
+            "OpenAI API call: $url",
+            $ip_address,
+            $user_agent,
+            $request_json,
+            $response_json,
+            $thread_id,
+            $run_id,
+            $status,
+            $duration
+        ]);
+        
+        error_log("🗃️ OpenAI komunikace zalogována: $action");
+        
+    } catch (Exception $e) {
+        error_log("Chyba při logování OpenAI komunikace: " . $e->getMessage());
+    }
+}
+
 // Funkce pro komunikaci s OpenAI API
 function callOpenAI($url, $data, $api_key) {
+    $start_time = microtime(true);
+    
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -37,21 +121,39 @@ function callOpenAI($url, $data, $api_key) {
         'Authorization: Bearer ' . $api_key,
         'OpenAI-Beta: assistants=v2'
     ]);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-
+    curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+    
     $response = curl_exec($ch);
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $duration = (microtime(true) - $start_time) * 1000; // v milisekundách
+    
     curl_close($ch);
-
+    
+    if ($response === false) {
+        $error_data = ['error' => 'cURL error', 'code' => $http_code];
+        logOpenAIRequest($url, $data, $error_data, null, null, 'error', $duration);
+        throw new Exception("cURL error occurred");
+    }
+    
+    $decoded_response = json_decode($response, true);
+    
     if ($http_code !== 200) {
+        logOpenAIRequest($url, $data, $decoded_response, null, null, 'error', $duration);
         throw new Exception("OpenAI API error: HTTP $http_code - $response");
     }
-
-    return json_decode($response, true);
+    
+    // Úspěšné logování
+    $thread_id = $decoded_response['id'] ?? null;
+    $run_id = $decoded_response['id'] ?? null;
+    logOpenAIRequest($url, $data, $decoded_response, $thread_id, $run_id, 'success', $duration);
+    
+    return $decoded_response;
 }
 
 // Funkce pro GET request na OpenAI API
 function getOpenAI($url, $api_key) {
+    $start_time = microtime(true);
+    
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -59,50 +161,78 @@ function getOpenAI($url, $api_key) {
         'Authorization: Bearer ' . $api_key,
         'OpenAI-Beta: assistants=v2'
     ]);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-
+    curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+    
     $response = curl_exec($ch);
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $duration = (microtime(true) - $start_time) * 1000; // v milisekundách
+    
     curl_close($ch);
-
+    
+    if ($response === false) {
+        $error_data = ['error' => 'cURL error', 'code' => $http_code];
+        logOpenAIRequest($url, 'GET', $error_data, null, null, 'error', $duration);
+        throw new Exception("cURL error occurred");
+    }
+    
+    $decoded_response = json_decode($response, true);
+    
     if ($http_code !== 200) {
+        logOpenAIRequest($url, 'GET', $decoded_response, null, null, 'error', $duration);
         throw new Exception("OpenAI API error: HTTP $http_code - $response");
     }
-
-    return json_decode($response, true);
+    
+    // Úspěšné logování
+    $thread_id = null;
+    $run_id = null;
+    
+    // Extrakce ID z URL pro lepší logování
+    if (preg_match('/\/threads\/([^\/]+)/', $url, $matches)) {
+        $thread_id = $matches[1];
+    }
+    if (preg_match('/\/runs\/([^\/]+)/', $url, $matches)) {
+        $run_id = $matches[1];
+    }
+    
+    logOpenAIRequest($url, 'GET', $decoded_response, $thread_id, $run_id, 'success', $duration);
+    
+    return $decoded_response;
 }
 
-// Funkce pro čekání na dokončení běhu asistenta
+// Funkce pro čekání na dokončení běhu
 function waitForRunCompletion($thread_id, $run_id, $api_key) {
-    $timeout = 15 * 60; // 15 minut
+    $max_wait_time = 180; // 3 minuty
     $start_time = time();
-
-    while (time() - $start_time < $timeout) {
+    
+    while (time() - $start_time < $max_wait_time) {
         $run_status = getOpenAI("https://api.openai.com/v1/threads/$thread_id/runs/$run_id", $api_key);
-
-        error_log("Stav běhu asistenta: " . $run_status['status']);
-
+        
         if ($run_status['status'] === 'completed') {
             return $run_status;
         }
-
-        if ($run_status['status'] === 'failed') {
-            throw new Exception("Asistent selhal: " . json_encode($run_status));
+        
+        if (in_array($run_status['status'], ['failed', 'cancelled', 'expired'])) {
+            throw new Exception("OpenAI run failed with status: " . $run_status['status']);
         }
-
-        if ($run_status['status'] === 'requires_action') {
-            throw new Exception("Asistent vyžaduje další akci, což není podporováno");
-        }
-
-        sleep(1);
+        
+        sleep(2);
     }
-
+    
     throw new Exception("Vypršel časový limit pro zpracování odpovědi asistenta");
 }
 
 // Funkce pro zpracování formulářových dat s asistentem
 function processWithAssistant($form_data, $api_key, $assistant_id) {
+    global $current_zadost_id;
+    
+    $process_start_time = microtime(true);
+    
     try {
+        // Logování začátku procesu
+        if ($current_zadost_id) {
+            logOpenAIRequest('process_start', $form_data, ['status' => 'starting'], null, null, 'info', null);
+        }
+        
         // 1. Vytvoření nového vlákna
         $thread = callOpenAI('https://api.openai.com/v1/threads', [], $api_key);
         error_log("Vytvořeno nové vlákno s ID: " . $thread['id']);
@@ -135,6 +265,12 @@ function processWithAssistant($form_data, $api_key, $assistant_id) {
 
                     // Parsování JSON z odpovědi
                     $parsed_data = parseAssistantResponse($raw_text);
+                    
+                    // Logování úspěšného dokončení
+                    $total_duration = (microtime(true) - $process_start_time) * 1000;
+                    if ($current_zadost_id) {
+                        logOpenAIRequest('process_complete', $form_data, $parsed_data, $thread['id'], $run['id'], 'success', $total_duration);
+                    }
 
                     return $parsed_data;
                 }
@@ -147,6 +283,13 @@ function processWithAssistant($form_data, $api_key, $assistant_id) {
 
     } catch (Exception $e) {
         error_log("Chyba při komunikaci s asistentem: " . $e->getMessage());
+        
+        // Logování chyby
+        $total_duration = (microtime(true) - $process_start_time) * 1000;
+        if ($current_zadost_id) {
+            logOpenAIRequest('process_error', $form_data, ['error' => $e->getMessage()], null, null, 'error', $total_duration);
+        }
+        
         throw new Exception("Chyba při komunikaci s asistentem: " . $e->getMessage());
     }
 }
@@ -214,6 +357,26 @@ function validateAndFixResponse($data) {
 
     error_log("✅ Úspěšně zpracována odpověď asistenta: " . json_encode($data));
     return $data;
+}
+
+// Funkce pro získání IP adresy klienta
+function getClientIP() {
+    $ip_fields = ['HTTP_CF_CONNECTING_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 
+                 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR'];
+    
+    foreach ($ip_fields as $field) {
+        if (!empty($_SERVER[$field])) {
+            $ip = $_SERVER[$field];
+            if (strpos($ip, ',') !== false) {
+                $ip = trim(explode(',', $ip)[0]);
+            }
+            if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+                return $ip;
+            }
+        }
+    }
+    
+    return $_SERVER['REMOTE_ADDR'] ?? 'unknown';
 }
 
 // Validace vstupních dat
@@ -299,61 +462,31 @@ try {
     $form_data = json_decode($input, true);
 
     if (!$form_data) {
-        throw new Exception('Neplatná JSON data');
+        throw new Exception('Neplatné JSON data');
     }
-
-    error_log('Přijata data formuláře: ' . json_encode($form_data));
 
     // Validace dat
     validateFormData($form_data);
 
-    // Inicializace databáze (pokud je povolena)
-    $db = null;
-    $zadost_id = null;
-
-    if ($config['app']['enable_database_logging']) {
-        try {
-            $db = new DotacniKalkulatorDB($config['database']);
-
-            // Uložení formulářových dat do databáze
-            $db_result = $db->ulozitFormularData($form_data);
-            $zadost_id = $db_result['zadost_id'];
-
-            error_log("✅ Data uložena do databáze s ID: $zadost_id, UUID: {$db_result['uuid']}");
-        } catch (Exception $e) {
-            error_log("⚠️ Chyba při ukládání do databáze: " . $e->getMessage());
-            // Pokračujeme i bez databáze
-        }
-    }
-
-    // Zpracování s asistentem
+    // Uložení dat do databáze
+    $zadost_id = $db_handler->storeFormData($form_data);
+    $current_zadost_id = $zadost_id; // Nastavení pro logování
+    
+    // Zpracování dat pomocí OpenAI asistenta
     $result = processWithAssistant($form_data, $openai_api_key, $assistant_id);
 
     // Aktualizace celkové dotace v databázi
-    if ($db && $zadost_id && isset($result['celková_dotace'])) {
-        try {
-            $db->aktualizovatCelkouDotaci($zadost_id, $result['celková_dotace']);
-            error_log("✅ Aktualizována celková dotace v databázi: {$result['celková_dotace']}");
-        } catch (Exception $e) {
-            error_log("⚠️ Chyba při aktualizaci celkové dotace: " . $e->getMessage());
-        }
-    }
+    $db_handler->updateTotalDotace($zadost_id, $result['celková_dotace'] ?? '0 Kč');
 
-    // Odeslání odpovědi s přidaným UUID pro tracking
-    $response = [
+    // Úspěšná odpověď
+    http_response_code(200);
+    echo json_encode([
         'success' => true,
         'data' => $result
-    ];
-
-    if ($db && isset($db_result['uuid'])) {
-        $response['tracking_uuid'] = $db_result['uuid'];
-    }
-
-    http_response_code(200);
-    echo json_encode($response);
+    ]);
 
 } catch (Exception $e) {
-    error_log('Chyba: ' . $e->getMessage());
+    error_log('Chyba v store-form.php: ' . $e->getMessage());
     http_response_code(500);
     echo json_encode([
         'success' => false,
