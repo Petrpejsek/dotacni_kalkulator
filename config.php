@@ -23,6 +23,7 @@ if (substr($_SERVER['HTTP_HOST'], 0, 4) !== 'www.' && substr($_SERVER['HTTP_HOST
     exit;
 }
 
+//unset($_SESSION["sledovac"]);
 if (!isset($_SESSION["sledovac"]) && isset($_GET["utm_source"])) {
     $_SESSION["sledovac"] = $_GET["utm_source"];
     if (isset($_GET["utm_medium"])) {
@@ -48,7 +49,7 @@ if (!isset($_SESSION["sledovac"]) && isset($_GET["custom_source"])) {
 $db_config = [
     'host' => 'localhost',
     'username' => 'enermio_cz',
-    'password' => 'cucqKsaOkiXuz2kg',
+    'password' => getenv('DB_PASSWORD'),
     'database' => 'enermio_cz',
     'charset' => 'utf8mb4'
 ];

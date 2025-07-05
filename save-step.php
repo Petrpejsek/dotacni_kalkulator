@@ -92,15 +92,20 @@ function createNewRequest($db, $data) {
     // Získání IP adresy a User Agent
     $ip_address = getClientIP();
     $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
-    
+
+    $utm_zdroj = NULL;
+    if (isset($_SESSION["sledovac"])) {
+        $utm_zdroj = $_SESSION["sledovac"];
+    }
+
     // Vytvoření UUID
     $uuid = generateUUID();
     
     // Vložení základního záznamu
     $pdo = $db->getPDO();
     $sql = "INSERT INTO dotacni_kalkulator_zadosti 
-            (uuid, typ_nemovitosti, step, data_json, ip_adresa, user_agent) 
-            VALUES (?, ?, ?, ?, ?, ?)";
+            (uuid, typ_nemovitosti, step, data_json, ip_adresa, user_agent, utm_zdroj) 
+            VALUES (?, ?, ?, ?, ?, ?, ?)";
     
     $initial_data = [
         'typ_nemovitosti' => $data['typ_nemovitosti'],
@@ -114,7 +119,8 @@ function createNewRequest($db, $data) {
         1,
         json_encode($initial_data, JSON_UNESCAPED_UNICODE),
         $ip_address,
-        $user_agent
+        $user_agent,
+        $utm_zdroj
     ]);
     
     $zadost_id = $pdo->lastInsertId();

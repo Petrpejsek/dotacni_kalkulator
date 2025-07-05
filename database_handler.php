@@ -91,12 +91,6 @@ class DotacniKalkulatorDB {
      */
     private function ulozitHlavniZadost($uuid, $form_data, $ip_address, $user_agent) {
 
-        $utm_zdroj = NULL;
-        if (isset($_SESSION["sledovac"])) {
-            $utm_zdroj = $_SESSION["sledovac"];
-        }
-
-
         $sql = "INSERT INTO dotacni_kalkulator_zadosti 
                 (uuid, typ_nemovitosti, rok_vystavby, ip_adresa, user_agent, utm_zdroj) 
                 VALUES (?, ?, ?, ?, ?, ?)";

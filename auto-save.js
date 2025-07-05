@@ -623,5 +623,3 @@ class KalkulatorAutoSave {
     }
 }
 
-// Inicializace auto-save při načtení stránky
-window.kalkulatorAutoSave = new KalkulatorAutoSave(); 
