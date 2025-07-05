@@ -207,6 +207,9 @@ class KalkulatorAutoSave {
                     checkbox.checked = true;
                 }
             });
+            
+            // 🆕 Generování dynamických otázek pro krok 4 po obnovení checkboxů
+            this.generateAndRestoreDynamicQuestions(data);
         }
         
         // Obnovení lokality (krok 5)
@@ -268,6 +271,230 @@ class KalkulatorAutoSave {
         }
         
         console.log('🔄 Formulář obnoven na krok:', requestData.step);
+    }
+    
+    /**
+     * 🆕 Generování a obnovení dynamických otázek pro krok 4
+     */
+    generateAndRestoreDynamicQuestions(data) {
+        // Nejdříve musíme vygenerovat dynamické otázky (stejná logika jako v script.js)
+        const dynamicQuestionsForm = document.getElementById('dynamic-questions');
+        if (!dynamicQuestionsForm) return;
+        
+        // Vyčistíme existující obsah
+        dynamicQuestionsForm.innerHTML = '';
+        
+        // Zavoláme hlavní funkci pro generování otázek ze script.js
+        if (typeof generateDynamicQuestions === 'function') {
+            generateDynamicQuestions();
+        } else {
+            // Pokud funkce není dostupná, implementujeme vlastní logiku
+            this.generateDynamicQuestionsInternal(data);
+        }
+        
+        // Nyní vyplníme hodnoty ze záložených dat
+        this.fillDynamicQuestionsValues(data);
+    }
+    
+    /**
+     * 🆕 Vyplnění hodnot do dynamicky vygenerovaných polí
+     */
+    fillDynamicQuestionsValues(data) {
+        const dynamicQuestionsForm = document.getElementById('dynamic-questions');
+        if (!dynamicQuestionsForm || !data.doplnujici_udaje) return;
+        
+        console.log('🔄 Vyplňuji hodnoty do dynamických polí:', data.doplnujici_udaje);
+        
+        // Procházíme všechny doplňující údaje
+        Object.entries(data.doplnujici_udaje).forEach(([key, value]) => {
+            // Pokusíme se najít odpovídající pole
+            
+            // 1. Zkusíme najít radio button
+            const radioInput = dynamicQuestionsForm.querySelector(`input[name="${key}"][value="${value}"]`);
+            if (radioInput) {
+                radioInput.checked = true;
+                console.log(`✅ Obnoveno radio pole ${key}: ${value}`);
+                return;
+            }
+            
+            // 2. Zkusíme najít number input podle labelu
+            const labels = dynamicQuestionsForm.querySelectorAll('label.dynamic-label');
+            for (const label of labels) {
+                if (label.textContent === key) {
+                    const input = label.parentElement.querySelector('input[type="number"]');
+                    if (input) {
+                        input.value = value;
+                        console.log(`✅ Obnoveno number pole ${key}: ${value}`);
+                        return;
+                    }
+                }
+            }
+            
+            // 3. Zkusíme najít checkbox skupinu
+            if (Array.isArray(value)) {
+                value.forEach(checkboxValue => {
+                    const checkbox = dynamicQuestionsForm.querySelector(`input[name="${key}[]"][value="${checkboxValue}"]`);
+                    if (checkbox) {
+                        checkbox.checked = true;
+                        console.log(`✅ Obnoveno checkbox ${key}: ${checkboxValue}`);
+                    }
+                });
+            }
+        });
+        
+        // Aktualizujeme stav tlačítka "Pokračovat" v kroku 4
+        const nextButtonStep4 = document.querySelector('#step4 .next-btn');
+        if (nextButtonStep4 && typeof validateDynamicQuestions === 'function') {
+            nextButtonStep4.disabled = !validateDynamicQuestions();
+        }
+    }
+    
+    /**
+     * 🆕 Interní generování dynamických otázek (záložní řešení)
+     */
+    generateDynamicQuestionsInternal(data) {
+        const dynamicQuestionsForm = document.getElementById('dynamic-questions');
+        if (!dynamicQuestionsForm || !data.opatreni) return;
+        
+        // Mapa opatření a jejich otázek (zkopírováno ze script.js)
+        const opatreniOtazky = {
+            'zatepleni-sten': {
+                label: 'Jaká je přibližná plocha obvodových stěn?\n(v m²)',
+                type: 'number',
+                min: 1,
+                placeholder: 'Např. 120',
+            },
+            'zatepleni-strechy': {
+                label: 'Jaká je plocha stropu/střechy k zateplení?\n(v m²)',
+                type: 'number',
+                min: 1,
+                placeholder: 'Např. 80',
+            },
+            'vymena-oken': {
+                label: 'Zadejte počet kusů nebo přibližnou plochu v m²',
+                type: 'number',
+                min: 1,
+                placeholder: 'Např. 10 (ks) nebo 15 (m²)',
+            },
+            'tepelne-cerpadlo': {
+                label: 'Jaký typ čerpadla plánujete?',
+                type: 'radio',
+                options: ['vzduch-voda', 'země-voda', 'nevím'],
+            },
+            'fotovoltaika': {
+                label: 'Jaký výkon FVE systému plánujete?\n(v kWp)',
+                type: 'number',
+                min: 1,
+                placeholder: 'Např. 5',
+            },
+            'ohrev-vody-fv': {
+                label: 'Vyberte:',
+                type: 'radio',
+                options: ['chci jen ohřev vody', 'kombinace s FV'],
+            },
+            'rekuperace': {
+                label: 'Typ plánovaného systému?',
+                type: 'radio',
+                options: ['centrální', 'decentrální', 'nejsem si jistý'],
+            },
+            'destova-voda': {
+                label: 'K jakému účelu chcete dešťovou vodu využít?',
+                type: 'checkbox',
+                options: ['WC', 'zalévání', 'jiné'],
+            },
+            'rizeni-spotreby': {
+                label: 'Plánujete baterii?',
+                type: 'radio',
+                options: ['Ano', 'Ne', 'Zvažuji'],
+            },
+            'rizene-vetrani': null // nemá poddotaz
+        };
+        
+        // Generujeme otázky pro každé vybrané opatření
+        data.opatreni.forEach(opatreni => {
+            const otazka = opatreniOtazky[opatreni];
+            if (!otazka) return;
+            
+            const wrapper = document.createElement('div');
+            wrapper.className = 'dynamic-question';
+            
+            if (otazka.type === 'number') {
+                const row = document.createElement('div');
+                row.className = 'dynamic-question-row';
+                
+                const label = document.createElement('label');
+                label.textContent = otazka.label;
+                label.className = 'dynamic-label';
+                row.appendChild(label);
+                
+                const input = document.createElement('input');
+                input.type = 'number';
+                input.min = otazka.min;
+                input.placeholder = otazka.placeholder;
+                input.className = 'dynamic-input';
+                row.appendChild(input);
+                
+                wrapper.appendChild(row);
+            } else if (otazka.type === 'radio') {
+                const label = document.createElement('label');
+                label.textContent = otazka.label;
+                label.className = 'dynamic-label';
+                wrapper.appendChild(label);
+                
+                const radioGroup = document.createElement('div');
+                radioGroup.className = 'radio-group';
+                
+                otazka.options.forEach(option => {
+                    const radioLabel = document.createElement('label');
+                    radioLabel.className = 'radio-option';
+                    
+                    const radio = document.createElement('input');
+                    radio.type = 'radio';
+                    radio.name = opatreni;
+                    radio.value = option;
+                    
+                    const span = document.createElement('span');
+                    span.textContent = option;
+                    
+                    radioLabel.appendChild(radio);
+                    radioLabel.appendChild(span);
+                    radioGroup.appendChild(radioLabel);
+                });
+                
+                wrapper.appendChild(radioGroup);
+            } else if (otazka.type === 'checkbox') {
+                const label = document.createElement('label');
+                label.textContent = otazka.label;
+                label.className = 'dynamic-label';
+                wrapper.appendChild(label);
+                
+                const checkboxGroup = document.createElement('div');
+                checkboxGroup.className = 'checkbox-group';
+                
+                otazka.options.forEach(option => {
+                    const checkboxLabel = document.createElement('label');
+                    checkboxLabel.className = 'checkbox-option';
+                    
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.name = opatreni + '[]';
+                    checkbox.value = option;
+                    
+                    const span = document.createElement('span');
+                    span.textContent = option;
+                    
+                    checkboxLabel.appendChild(checkbox);
+                    checkboxLabel.appendChild(span);
+                    checkboxGroup.appendChild(checkboxLabel);
+                });
+                
+                wrapper.appendChild(checkboxGroup);
+            }
+            
+            dynamicQuestionsForm.appendChild(wrapper);
+        });
+        
+        console.log('🔄 Dynamické otázky vygenerovány interně');
     }
     
     /**
