@@ -276,13 +276,7 @@ $config = require_once 'config.php';
         </div>
     </div>
 </div>
-
-<script src="auto-save.js?<?= time(); ?>"></script>
 <script src="script.js?<?= time(); ?>"></script>
 <script src="nocache.js"></script>
-<script>
-    // Inicializace auto-save při načtení stránky
-    window.kalkulatorAutoSave = new KalkulatorAutoSave();
-</script>
 </body>
 </html> 

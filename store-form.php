@@ -4,6 +4,23 @@
  * Přijímá data z formuláře a vrací výsledky od OpenAI asistenta
  */
 
+error_reporting(E_ALL);
+ini_set("display_errors", 1);
+
+function errHandle($errNo, $errStr, $errFile, $errLine)
+{
+    $msg = "$errStr in $errFile on line $errLine";
+    if ($errNo == E_NOTICE || $errNo == E_WARNING) {
+        throw new ErrorException($msg, $errNo);
+    } else {
+        echo $msg;
+    }
+}
+
+set_error_handler('errHandle');
+
+
+
 // HTTP hlavičky
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
@@ -26,6 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 // Načtení konfigurace a databázové třídy
 $config = require_once 'config.php';
 require_once 'database_handler.php';
+
 
 // Získání konfigurací
 $db_config = $config['database'];
@@ -84,7 +102,7 @@ function logOpenAIRequest($url, $request_data, $response_data, $thread_id = null
         $sql = "INSERT INTO dotacni_kalkulator_logy 
                 (zadost_id, akce, popis, ip_adresa, user_agent, openai_request, openai_response, openai_thread_id, openai_run_id, openai_status, openai_duration) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        
+
         $stmt = $db_connection->prepare($sql);
         $stmt->execute([
             $current_zadost_id,
@@ -469,14 +487,14 @@ try {
     validateFormData($form_data);
 
     // Uložení dat do databáze
-    $zadost_id = $db_handler->storeFormData($form_data);
-    $current_zadost_id = $zadost_id; // Nastavení pro logování
+    $zadost_id = $db_handler->ulozitFormularData($form_data);
+    $current_zadost_id = $zadost_id["zadost_id"]; // Nastavení pro logování
     
     // Zpracování dat pomocí OpenAI asistenta
     $result = processWithAssistant($form_data, $openai_api_key, $assistant_id);
 
     // Aktualizace celkové dotace v databázi
-    $db_handler->updateTotalDotace($zadost_id, $result['celková_dotace'] ?? '0 Kč');
+    $db_handler->aktualizovatCelkouDotaci($zadost_id["zadost_id"], $result['celková_dotace'] ?? '0 Kč');
 
     // Úspěšná odpověď
     http_response_code(200);

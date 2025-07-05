@@ -27,7 +27,7 @@ try {
         'openai_thread_id' => "ADD COLUMN openai_thread_id VARCHAR(100) DEFAULT NULL AFTER openai_response",
         'openai_run_id' => "ADD COLUMN openai_run_id VARCHAR(100) DEFAULT NULL AFTER openai_thread_id",
         'openai_status' => "ADD COLUMN openai_status VARCHAR(20) DEFAULT NULL AFTER openai_run_id",
-        'openai_duration' => "ADD COLUMN openai_duration INT DEFAULT NULL AFTER openai_status COMMENT 'Doba trvání v milisekundách'"
+        'openai_duration' => "ADD COLUMN openai_duration INT DEFAULT NULL AFTER openai_status"
     ];
     
     foreach ($new_columns as $column_name => $alter_sql) {
