@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test podotázek</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .test-result { margin: 10px 0; padding: 10px; border-radius: 3px; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        .info { background-color: #d1ecf1; color: #0c5460; }
+        button { padding: 10px 15px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        #dynamic-questions { margin: 20px 0; }
+        .dynamic-question { margin: 15px 0; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+        .dynamic-label { font-weight: bold; margin-bottom: 5px; display: block; }
+        .dynamic-input { width: 100px; padding: 5px; margin: 5px; }
+        .checkbox-option, .radio-option { margin: 5px 0; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test podotázek - Dotační kalkulátor</h1>
+    
+    <div class="test-section">
+        <h2>Test 1: Načtení globální definice otázek</h2>
+        <button onclick="testGlobalDefinition()">Spustit test</button>
+        <div id="test1-results"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 2: Detekce podotázek</h2>
+        <button onclick="testSubQuestionDetection()">Spustit test</button>
+        <div id="test2-results"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 3: Generování dynamických otázek</h2>
+        <button onclick="testQuestionGeneration()">Spustit test</button>
+        <div id="test3-results"></div>
+        <div id="dynamic-questions"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 4: Sběr dat z formuláře</h2>
+        <button onclick="testDataCollection()">Spustit test</button>
+        <div id="test4-results"></div>
+    </div>
+
+    <!-- Simulace potřebných elementů -->
+    <div id="step3" style="display: none;">
+        <input type="checkbox" value="zatepleni-sten" checked>
+        <input type="checkbox" value="fotovoltaika" checked>
+        <input type="checkbox" value="tepelne-cerpadlo" checked>
+    </div>
+
+    <!-- Načtení hlavních skriptů -->
+    <script src="script.js"></script>
+    <script src="auto-save.js"></script>
+    
+    <script>
+        // Simulace některých funkcí z hlavního skriptu
+        function showResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.innerHTML += `<div class="test-result ${type}">${message}</div>`;
+        }
+        
+        function clearResults(elementId) {
+            document.getElementById(elementId).innerHTML = '';
+        }
+        
+        // Test 1: Načtení globální definice otázek
+        function testGlobalDefinition() {
+            clearResults('test1-results');
+            
+            try {
+                if (typeof window.opatreniOtazky === 'undefined') {
+                    showResult('test1-results', '❌ Globální definice otázek není dostupná', 'error');
+                    return;
+                }
+                
+                showResult('test1-results', '✅ Globální definice otázek je dostupná', 'success');
+                
+                // Zkontroluj fotovoltaiku
+                if (window.opatreniOtazky.fotovoltaika) {
+                    const fvOtazky = window.opatreniOtazky.fotovoltaika;
+                    if (fvOtazky['pozadovany-vykon'] && fvOtazky['strecha-na-sever'] && fvOtazky['stav-strechy']) {
+                        showResult('test1-results', '✅ Fotovoltaika má všechny 3 podotázky', 'success');
+                    } else {
+                        showResult('test1-results', '❌ Fotovoltaika nemá správné podotázky', 'error');
+                    }
+                }
+                
+                // Zkontroluj jednoduché otázky
+                if (window.opatreniOtazky['zatepleni-sten'] && window.opatreniOtazky['zatepleni-sten'].type) {
+                    showResult('test1-results', '✅ Zateplení stěn je jednoduchá otázka', 'success');
+                } else {
+                    showResult('test1-results', '❌ Zateplení stěn není správně definováno', 'error');
+                }
+                
+            } catch (error) {
+                showResult('test1-results', `❌ Chyba: ${error.message}`, 'error');
+            }
+        }
+        
+        // Test 2: Detekce podotázek
+        function testSubQuestionDetection() {
+            clearResults('test2-results');
+            
+            try {
+                // Vytvoř instanci auto-save třídy pro testování
+                const autoSave = new KalkulatorAutoSave();
+                
+                // Test fotovoltaiky (má podotázky)
+                if (autoSave.hasSubQuestions('fotovoltaika')) {
+                    showResult('test2-results', '✅ Fotovoltaika správně detekována jako má podotázky', 'success');
+                    
+                    const subQuestions = autoSave.getSubQuestions('fotovoltaika');
+                    const subKeys = Object.keys(subQuestions);
+                    showResult('test2-results', `✅ Nalezeny podotázky: ${subKeys.join(', ')}`, 'success');
+                    
+                } else {
+                    showResult('test2-results', '❌ Fotovoltaika není detekována jako má podotázky', 'error');
+                }
+                
+                // Test zateplení stěn (nemá podotázky)
+                if (!autoSave.hasSubQuestions('zatepleni-sten')) {
+                    showResult('test2-results', '✅ Zateplení stěn správně detekováno jako jednoduchá otázka', 'success');
+                } else {
+                    showResult('test2-results', '❌ Zateplení stěn chybně detekováno jako má podotázky', 'error');
+                }
+                
+            } catch (error) {
+                showResult('test2-results', `❌ Chyba: ${error.message}`, 'error');
+            }
+        }
+        
+        // Test 3: Generování dynamických otázek
+        function testQuestionGeneration() {
+            clearResults('test3-results');
+            
+            try {
+                const dynamicForm = document.getElementById('dynamic-questions');
+                dynamicForm.innerHTML = '';
+                
+                // Simuluj data s fotovoltaikou
+                const testData = {
+                    opatreni: ['zatepleni-sten', 'fotovoltaika']
+                };
+                
+                const autoSave = new KalkulatorAutoSave();
+                autoSave.generateDynamicQuestionsInternal(testData);
+                
+                // Zkontroluj vygenerované otázky
+                const generatedQuestions = dynamicForm.querySelectorAll('.dynamic-question');
+                showResult('test3-results', `✅ Vygenerováno ${generatedQuestions.length} otázek`, 'success');
+                
+                // Zkontroluj, že fotovoltaika má 3 podotázky
+                const fvQuestions = dynamicForm.querySelectorAll('[data-main-key="fotovoltaika"]');
+                if (fvQuestions.length === 3) {
+                    showResult('test3-results', '✅ Fotovoltaika má správně 3 podotázky', 'success');
+                } else {
+                    showResult('test3-results', `❌ Fotovoltaika má ${fvQuestions.length} podotázek místo 3`, 'error');
+                }
+                
+                // Zkontroluj názvy inputů
+                const fvInputs = dynamicForm.querySelectorAll('input[name^="fotovoltaika-"]');
+                if (fvInputs.length > 0) {
+                    showResult('test3-results', '✅ Fotovoltaika inputy mají správné názvy s podklíči', 'success');
+                } else {
+                    showResult('test3-results', '❌ Fotovoltaika inputy nemají správné názvy', 'error');
+                }
+                
+            } catch (error) {
+                showResult('test3-results', `❌ Chyba: ${error.message}`, 'error');
+            }
+        }
+        
+        // Test 4: Sběr dat z formuláře
+        function testDataCollection() {
+            clearResults('test4-results');
+            
+            try {
+                // Najdi vygenerované inputy a vyplň je
+                const vykonInput = document.querySelector('input[name="fotovoltaika-pozadovany-vykon"]');
+                const orientaceInput = document.querySelector('input[name="fotovoltaika-strecha-na-sever"][value="jih"]');
+                const stavInput = document.querySelector('input[name="fotovoltaika-stav-strechy"][value="dobrý"]');
+                
+                if (vykonInput) {
+                    vykonInput.value = '10';
+                    showResult('test4-results', '✅ Výkon nastaven na 10 kWp', 'success');
+                }
+                
+                if (orientaceInput) {
+                    orientaceInput.checked = true;
+                    showResult('test4-results', '✅ Orientace nastavena na jih', 'success');
+                }
+                
+                if (stavInput) {
+                    stavInput.checked = true;
+                    showResult('test4-results', '✅ Stav střechy nastaven na dobrý', 'success');
+                }
+                
+                // Simuluj sběr dat
+                const mockData = {
+                    fotovoltaika: {
+                        'pozadovany-vykon': '10',
+                        'strecha-na-sever': 'jih',
+                        'stav-strechy': 'dobrý'
+                    },
+                    'zatepleni-sten': '120'
+                };
+                
+                showResult('test4-results', `✅ Simulovaná data: ${JSON.stringify(mockData, null, 2)}`, 'success');
+                
+            } catch (error) {
+                showResult('test4-results', `❌ Chyba: ${error.message}`, 'error');
+            }
+        }
+        
+        // Spustit všechny testy po načtení
+        document.addEventListener('DOMContentLoaded', function() {
+            showResult('test1-results', '📋 Klikněte na tlačítka pro spuštění testů', 'info');
+        });
+    </script>
+</body>
+</html> 

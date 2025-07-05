@@ -240,4 +240,68 @@ window.opatreniOtazky = {
 - Auto-save systém: `const opatreniOtazky = window.opatreniOtazky;`
 - Přidání nové otázky: pouze v `script.js` na začátku souboru
 
-**Pozor:** Pokud potřebujete upravit otázky, editujte pouze definici v `script.js`. Změny v `auto-save.js` už nejsou potřeba. 
+**Pozor:** Pokud potřebujete upravit otázky, editujte pouze definici v `script.js`. Změny v `auto-save.js` už nejsou potřeba.
+
+### Podpora více podotázek (verze 1.2)
+Od verze 1.2 systém podporuje více podotázek pro jedno opatření. Místo jedné otázky můžete definovat několik souvisejících otázek:
+
+**Jednoduchá otázka:**
+```javascript
+'zatepleni-sten': {
+    label: 'Jaká je přibližná plocha obvodových stěn?\n(v m²)',
+    type: 'number',
+    min: 1,
+    placeholder: 'Např. 120',
+}
+```
+
+**Opatření s podotázkami:**
+```javascript
+'fotovoltaika': {
+    'pozadovany-vykon': {
+        label: 'Jaký výkon FVE systému plánujete?\n(v kWp)',
+        type: 'number',
+        min: 1,
+        placeholder: 'Např. 5',
+    },
+    'strecha-na-sever': {
+        label: 'Jaká je orientace vaší střechy?',
+        type: 'radio',
+        options: ['jih', 'jihovýchod', 'jihozápad', 'východ', 'západ', 'sever', 'nevím'],
+    },
+    'stav-strechy': {
+        label: 'Jaký je stav střechy?',
+        type: 'radio',
+        options: ['dobrý', 'nutná drobná oprava', 'nutná větší oprava', 'nevím'],
+    }
+}
+```
+
+**Výsledná struktura dat:**
+```javascript
+// Jednoduchá otázka
+doplnujici_udaje: {
+    'zatepleni-sten': '120'
+}
+
+// Opatření s podotázkami
+doplnujici_udaje: {
+    'fotovoltaika': {
+        'pozadovany-vykon': '5',
+        'strecha-na-sever': 'jih',
+        'stav-strechy': 'dobrý'
+    }
+}
+```
+
+**Pomocné funkce:**
+- `hasSubQuestions(opatreniKey)` - zjišťuje, zda má opatření podotázky
+- `getSubQuestions(opatreniKey)` - vrací objekt s podotázkami
+- `getSimpleQuestion(opatreniKey)` - vrací jednoduchou otázku
+
+**Názvy HTML inputů:**
+- Jednoduchá otázka: `name="zatepleni-sten"`
+- Podotázky: `name="fotovoltaika-pozadovany-vykon"`, `name="fotovoltaika-strecha-na-sever"`, atd.
+
+**Testování:**
+Pro testování funkcionality podotázek otevřete soubor `test-subquestions.html` v prohlížeči. 
